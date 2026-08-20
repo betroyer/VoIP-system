@@ -26,7 +26,7 @@ export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) 
       </div>
       <p className="mt-2 text-sm text-muted">
         Unli All-Net still applies when you call from this physical SIM. Calls from the
-        computer (Contact / Inbox) go through Twilio, not this promo.
+        computer (Contact / Inbox) must pass through your office gateway/PBX setup.
       </p>
     </aside>
   );

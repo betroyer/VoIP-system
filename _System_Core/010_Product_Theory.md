@@ -16,7 +16,7 @@ A cheap, private web dashboard so staff can contact local Philippine customers a
 ## Domain principles
 
 1. **PH only** — `+63` / `09` destinations.
-2. **PC agents need a phone API** — Twilio Voice + SMS; Unli does not apply to WebRTC.
+2. **PC agents need a gateway/PBX bridge** — the office SIM handles SMS/voice, not the browser.
 3. **Phone agents stay cheap** — Unli on the physical SIM still works via `tel:` / `sms:`.
 4. **Private by login** — Supabase Auth; no public sign-up.
 5. **Consent if recording** — RA 4200.
@@ -25,8 +25,8 @@ A cheap, private web dashboard so staff can contact local Philippine customers a
 
 | Action | Behavior |
 |--------|----------|
-| **Contact → Call** | Twilio Voice in the browser when keys are set |
-| **Inbox → Send** | Twilio SMS; inbound webhook fills the thread |
+| **Contact → Call** | The dashboard asks the office gateway / PBX to place the call |
+| **Inbox → Send** | The dashboard asks the gateway to send SMS; inbound webhook fills the thread |
 | **Call on phone** | Opens the device phone app (`tel:`) on SIM 09171392170 |
 
 ## Non-goals

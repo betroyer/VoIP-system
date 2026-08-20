@@ -6,13 +6,9 @@ import { MessageBubble } from "@/components/message-bubble";
 import { ThreadList } from "@/components/thread-list";
 import { StaffPage, requireStaff } from "@/lib/auth";
 import { formatPhone } from "@/lib/format";
+import { getCallerIdDisplay, isGatewayConfigured } from "@/lib/gateway";
 import { buildThreads } from "@/lib/inbox";
 import { phoneKey } from "@/lib/phone-links";
-import {
-  getOutboundCallerId,
-  isTwilioConfigured,
-  isTwilioVoiceConfigured,
-} from "@/lib/twilio";
 import type { Customer, Message } from "@/lib/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -76,8 +72,8 @@ export default async function InboxThreadPage({
             <BrowserCallButton
               customerPhone={phone}
               customerName={customer?.name}
-              voiceReady={isTwilioVoiceConfigured()}
-              callerIdDisplay={getOutboundCallerId()}
+              voiceReady={isGatewayConfigured()}
+              callerIdDisplay={getCallerIdDisplay()}
               label="Call"
             />
           </header>
@@ -92,7 +88,7 @@ export default async function InboxThreadPage({
               ))
             )}
           </div>
-          <InboxComposer phoneNumber={phone} smsReady={isTwilioConfigured()} />
+          <InboxComposer phoneNumber={phone} smsReady={isGatewayConfigured()} />
         </section>
       </div>
     </StaffPage>

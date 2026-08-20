@@ -14,7 +14,7 @@
 | Auth + DB + storage | Supabase (Postgres, Auth, Storage, RLS) |
 | Hosting | Vercel (`betroyers-projects` / `voip-system`) |
 | GitHub | `betroyer/VoIP-system` (HTTPS remote) |
-| Contact | Twilio Voice (PC) or business phone + Unli |
+| Contact | SIM gateway / PBX bridge (PC) or business phone + Unli |
 
 ## Accounts (keep separate from Brent/PYX)
 
@@ -41,7 +41,9 @@
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` + Vercel | `https://dphjtppwsdjbbrmaofje.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` + Vercel | Public anon key (RLS-protected) |
 | `NEXT_PUBLIC_BUSINESS_PHONE` | `.env.local` + Vercel | Fallback SIM shown in the UI (`09171392170`) |
-| `TWILIO_*` | `.env.local` + Vercel (server) | PC calling and SMS |
+| `GATEWAY_BRIDGE_URL` | `.env.local` + Vercel (server) | Local office bridge for the SIM gateway / PBX |
+| `GATEWAY_API_KEY` | `.env.local` + Vercel (server) | Shared secret for bridge requests/webhooks |
+| `GATEWAY_CALLER_ID` | `.env.local` + Vercel | Business SIM shown as PC caller ID |
 | `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` + Vercel (server only) | Inbound SMS webhook inserts |
 
 Never commit `.env.local`, service role, or `sbp_` personal access tokens.

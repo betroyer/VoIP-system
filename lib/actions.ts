@@ -1,12 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { inboxPath, phoneKey, smsLink } from "@/lib/phone-links";
-import {
-  isPhilippineNumber,
-  isTwilioConfigured,
-  sendTwilioSms,
-} from "@/lib/twilio";
+import { sendGatewaySms } from "@/lib/gateway";
+import { inboxPath, isPhilippineNumber, phoneKey, smsLink } from "@/lib/phone-links";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -217,12 +213,8 @@ export async function sendCustomerSms(
 
   const key = phoneKey(phone_number);
 
-  if (isTwilioConfigured()) {
-    const result = await sendTwilioSms(phone_number, body);
-    if (!result.ok) {
-      return { error: result.error };
-    }
-
+  const result = await sendGatewaySms(phone_number, body);
+  if (result.ok) {
     const { error } = await supabase.from("contact_logs").insert({
       order_id,
       staff_id: user.id,
@@ -240,7 +232,7 @@ export async function sendCustomerSms(
       staff_id: user.id,
       direction: "outbound",
       body,
-      provider_sid: result.sid,
+      provider_sid: result.providerId ?? null,
     });
 
     revalidatePath("/");
@@ -250,6 +242,10 @@ export async function sendCustomerSms(
     revalidatePath("/inbox");
     revalidatePath(inboxPath(key));
     return { error: null, sent: true };
+  }
+
+  if (result.error !== "Gateway bridge is not configured.") {
+    return { error: result.error };
   }
 
   return { error: null, smsLink: smsLink(phone_number, body) };
@@ -279,12 +275,8 @@ export async function sendInboxMessage(
     return { error: "SMS is limited to Philippine numbers." };
   }
 
-  if (isTwilioConfigured()) {
-    const result = await sendTwilioSms(phone_number, body);
-    if (!result.ok) {
-      return { error: result.error };
-    }
-
+  const result = await sendGatewaySms(phone_number, body);
+  if (result.ok) {
     const { data: customers } = await supabase
       .from("customers")
       .select("id, phone_number")
@@ -299,7 +291,7 @@ export async function sendInboxMessage(
       staff_id: user.id,
       direction: "outbound",
       body,
-      provider_sid: result.sid,
+      provider_sid: result.providerId ?? null,
     });
 
     if (error) {
@@ -311,43 +303,9 @@ export async function sendInboxMessage(
     return { error: null, sent: true };
   }
 
+  if (result.error !== "Gateway bridge is not configured.") {
+    return { error: result.error };
+  }
+
   return { error: null, smsLink: smsLink(phone_number, body) };
-}
-
-export async function logBrowserCall(input: {
-  orderId?: string;
-  customerPhone: string;
-  outcome: "answered" | "no_answer" | "busy" | "failed";
-  notes?: string;
-}): Promise<ActionState> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: "You need to sign in first." };
-  }
-
-  if (!input.orderId) {
-    return { error: null };
-  }
-
-  const { error } = await supabase.from("contact_logs").insert({
-    order_id: input.orderId,
-    staff_id: user.id,
-    contact_type: "call",
-    outcome: input.outcome,
-    notes: input.notes ?? `In-browser call to ${input.customerPhone}`,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/");
-  revalidatePath("/orders");
-  revalidatePath(`/orders/${input.orderId}`);
-  revalidatePath("/logs");
-  return { error: null };
 }

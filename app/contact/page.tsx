@@ -2,15 +2,15 @@ import { CallCenterSetupBanner } from "@/components/call-center-setup-banner";
 import { DialPad } from "@/components/dial-pad";
 import { StaffPage } from "@/lib/auth";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
-import { getOutboundCallerId, isTwilioVoiceConfigured } from "@/lib/twilio";
+import { getCallerIdDisplay, isGatewayConfigured } from "@/lib/gateway";
 
 export default function ContactPage() {
   return (
     <StaffPage>
       <h1 className="text-2xl font-semibold tracking-tight">Contact</h1>
       <p className="mt-1 text-sm text-muted">
-        Dial a Philippine number and call from this computer. Open inbox to text the same
-        number.
+        Dial a Philippine number and place the call through your office SIM gateway.
+        Open inbox to text the same number.
       </p>
 
       <div className="mt-5">
@@ -23,8 +23,8 @@ export default function ContactPage() {
 
       <section className="mt-6 rounded-xl border border-line bg-card p-6 shadow-sm">
         <DialPad
-          voiceReady={isTwilioVoiceConfigured()}
-          callerIdDisplay={getOutboundCallerId()}
+          voiceReady={isGatewayConfigured()}
+          callerIdDisplay={getCallerIdDisplay()}
         />
       </section>
     </StaffPage>

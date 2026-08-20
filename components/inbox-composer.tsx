@@ -36,7 +36,7 @@ export function InboxComposer({
           placeholder={
             smsReady
               ? "Type a message…"
-              : "Twilio SMS not set — will open the phone SMS app"
+              : "Gateway bridge not set — will open the phone SMS app"
           }
           className="min-h-[44px] flex-1 resize-none rounded-md border border-line bg-white px-3 py-2 text-sm"
         />

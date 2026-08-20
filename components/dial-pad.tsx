@@ -92,7 +92,7 @@ export function DialPad({
 
       {valid ? (
         <p className="text-center text-xs text-muted">
-          Will dial {formatPhone(phone)}. Allow the microphone when the browser asks.
+          Will dial {formatPhone(phone)} through the office PBX/gateway setup.
         </p>
       ) : null}
     </div>

@@ -1,11 +1,8 @@
 "use client";
 
-import { logBrowserCall } from "@/lib/actions";
-import { toE164 } from "@/lib/phone-links";
-import { Device, type Call } from "@twilio/voice-sdk";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-type Status = "idle" | "connecting" | "ringing" | "in-call" | "error";
+type Status = "idle" | "requesting" | "requested" | "error";
 
 export function BrowserCallButton({
   customerPhone,
@@ -22,85 +19,30 @@ export function BrowserCallButton({
   callerIdDisplay: string;
   label?: string;
 }) {
-  const deviceRef = useRef<Device | null>(null);
-  const callRef = useRef<Call | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
-  const connectedRef = useRef(false);
-
-  const teardown = useCallback(() => {
-    callRef.current?.disconnect();
-    callRef.current = null;
-    setStatus("idle");
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      callRef.current?.disconnect();
-      deviceRef.current?.destroy();
-    };
-  }, []);
-
-  async function ensureDevice() {
-    if (deviceRef.current) {
-      return deviceRef.current;
-    }
-    const res = await fetch("/api/voice/token");
-    const data = (await res.json()) as { token?: string; error?: string };
-    if (!res.ok || !data.token) {
-      throw new Error(data.error ?? "Could not start calling.");
-    }
-    const device = new Device(data.token, { logLevel: "error" });
-    await device.register();
-    deviceRef.current = device;
-    return device;
-  }
 
   async function startCall() {
     setError(null);
-    setStatus("connecting");
+    setStatus("requesting");
     try {
-      const device = await ensureDevice();
-      const call = await device.connect({
-        params: { To: toE164(customerPhone) },
-      });
-      callRef.current = call;
-
-      connectedRef.current = false;
-      call.on("ringing", () => setStatus("ringing"));
-      call.on("accept", () => {
-        connectedRef.current = true;
-        setStatus("in-call");
-      });
-      call.on("disconnect", () => {
-        void logBrowserCall({
+      const res = await fetch("/api/gateway/calls/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phoneNumber: customerPhone,
+          customerName,
           orderId,
-          customerPhone,
-          outcome: connectedRef.current ? "answered" : "no_answer",
-          notes: `PC call to ${customerName ?? customerPhone} as ${callerIdDisplay}`,
-        });
-        callRef.current = null;
-        setStatus("idle");
+        }),
       });
-      call.on("cancel", () => {
-        void logBrowserCall({
-          orderId,
-          customerPhone,
-          outcome: "no_answer",
-          notes: `Call cancelled to ${customerName ?? customerPhone}`,
-        });
-        teardown();
-      });
-      call.on("error", (err) => {
-        setError(err.message);
-        setStatus("error");
-        void logBrowserCall({
-          orderId,
-          customerPhone,
-          outcome: "failed",
-          notes: err.message,
-        });
-      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        message?: string;
+      };
+      if (!res.ok) {
+        throw new Error(data.error ?? "Could not start calling.");
+      }
+      setStatus("requested");
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Call failed.");
@@ -118,35 +60,39 @@ export function BrowserCallButton({
           {label} (setup needed)
         </button>
         <p className="max-w-md text-xs text-muted">
-          Calling from this PC needs Twilio Voice keys (see README). Verify caller ID{" "}
-          <span className="font-mono">{callerIdDisplay}</span>, then redeploy.
+          Calling from this PC needs the office gateway bridge and PBX/gateway box
+          for <span className="font-mono">{callerIdDisplay}</span>.
         </p>
       </div>
     );
   }
 
-  const inProgress =
-    status === "connecting" || status === "ringing" || status === "in-call";
   const buttonLabel =
-    status === "connecting"
-      ? "Connecting…"
-      : status === "ringing"
-        ? "Ringing…"
-        : status === "in-call"
-          ? "Hang up"
-          : label;
+    status === "requesting"
+      ? "Requesting…"
+      : status === "requested"
+        ? "Requested"
+        : label;
 
   return (
     <div className="grid gap-1">
       <button
         type="button"
-        onClick={() => (inProgress ? teardown() : void startCall())}
+        onClick={() => void startCall()}
         className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white ${
-          inProgress ? "bg-danger hover:bg-red-800" : "bg-accent hover:bg-accent-hover"
+          status === "requested"
+            ? "bg-emerald-700 hover:bg-emerald-800"
+            : "bg-accent hover:bg-accent-hover"
         }`}
       >
         {buttonLabel}
       </button>
+      {status === "requested" ? (
+        <p className="text-xs text-muted">
+          Call request sent to the gateway bridge. Audio continues in your PBX/SIP
+          client, not inside the browser.
+        </p>
+      ) : null}
       {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );

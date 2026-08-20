@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-/** Server-only. Used by Twilio webhooks. Never import from client components. */
+/** Server-only. Used by gateway webhooks. Never import from client components. */
 export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

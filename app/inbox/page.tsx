@@ -34,7 +34,8 @@ export default async function InboxPage() {
       <InboxRealtime />
       <h1 className="text-2xl font-semibold tracking-tight">Inbox</h1>
       <p className="mt-1 text-sm text-muted">
-        Message customers from this PC. Open a thread to call them.
+        Message customers from this PC through the SIM gateway. Open a thread to call
+        them.
       </p>
       <div className="mt-5">
         <CallCenterSetupBanner />

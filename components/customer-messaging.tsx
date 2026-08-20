@@ -1,6 +1,7 @@
 "use client";
 
 import { sendCustomerSms, type SmsActionState } from "@/lib/actions";
+import { isGatewayConfigured } from "@/lib/gateway";
 import { SMS_TEMPLATES, statusLabelForSms } from "@/lib/sms-templates";
 import { getBusinessPhone } from "@/lib/business-phone";
 import { formatPhone } from "@/lib/format";
@@ -98,8 +99,11 @@ export function CustomerMessaging({
             {pending ? "Sending…" : "Send from this PC"}
           </button>
           <p className="text-xs text-muted">
-            With Twilio, the text leaves this computer. Without it, this opens the phone SMS
-            app for SIM {formatPhone(getBusinessPhone())}.
+            {isGatewayConfigured()
+              ? "The message will be sent through the office SIM gateway."
+              : `Without the gateway bridge, this opens the phone SMS app for SIM ${formatPhone(
+                  getBusinessPhone(),
+                )}.`}
           </p>
           {state.sent ? <p className="text-sm text-accent">Message sent.</p> : null}
         </form>

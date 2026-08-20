@@ -4,6 +4,12 @@
 
 ## Recent log entries
 
+### 2026-08-20 — Switched PC calling/SMS from Twilio to gateway-ready bridge
+
+Adopted Plan v6: one business SIM in a gateway box, with the dashboard calling a local bridge/PBX instead of Twilio. Added gateway webhook routes for inbound SMS and call events, and updated Contact/Inbox UI copy to match the hardware path.
+
+**Key files:** `lib/gateway.ts`, `app/api/gateway/`, `components/browser-call-button.tsx`, `README.md`
+
 ### 2026-08-20 — Call center Contact + Inbox (from PC)
 
 Staff asked for computer calling and Messenger-style SMS. Added **Contact** (dial pad) and **Inbox** (threads + call). Twilio Voice/SMS is required for the PC path; Unli SIM remains phone fallback. Plan v3 is superseded for desktop agents by spec `2026-08-20_call-center-contact-inbox`.

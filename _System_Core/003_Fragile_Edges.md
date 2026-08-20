@@ -49,17 +49,17 @@ On order edit, `customer_id` is disabled. `updateOrder` must not require it from
 
 Bucket `call-recordings` is not public. Store the storage **path** in `contact_logs.recording_link`, then signed URLs when playing back.
 
-## Twilio webhooks must skip login
+## Gateway webhooks must skip login
 
-`/api/voice/twiml` and `/api/sms/incoming` are allowlisted in `lib/supabase/proxy.ts`. `TWILIO_VOICE_WEBHOOK_URL` / `TWILIO_SMS_WEBHOOK_URL` must match the public URL Twilio posts to (signature check).
+`/api/gateway/messages/incoming` and `/api/gateway/calls/events` are allowlisted in `lib/supabase/proxy.ts`. If `GATEWAY_API_KEY` is set, the bridge must send the same `x-gateway-api-key` header.
 
 ## Service role is server-only
 
 `SUPABASE_SERVICE_ROLE_KEY` is used only in `lib/supabase/admin.ts` for inbound SMS. Never prefix with `NEXT_PUBLIC_`.
 
-## PC calling is not Unli
+## PC calling needs a bridge
 
-WebRTC audio goes through Twilio minutes. Caller ID is `TWILIO_CALLER_ID` only if that mobile is verified in Twilio.
+The browser does not carry the call audio itself anymore. The dashboard sends a call request to the bridge; the real voice path must be handled by the PBX/SIP client/gateway setup on the office network.
 
 ## RA 4200
 

@@ -31,10 +31,11 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
-  const isTwilioWebhook =
-    path === "/api/voice/twiml" || path === "/api/sms/incoming";
+  const isGatewayWebhook =
+    path === "/api/gateway/messages/incoming" ||
+    path === "/api/gateway/calls/events";
 
-  if (!user && !isLogin && !isTwilioWebhook) {
+  if (!user && !isLogin && !isGatewayWebhook) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

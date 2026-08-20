@@ -1,29 +1,34 @@
-import { isTwilioConfigured, isTwilioVoiceConfigured } from "@/lib/twilio";
+import { getCallerIdDisplay, isGatewayConfigured } from "@/lib/gateway";
 import { isAdminConfigured } from "@/lib/supabase/admin";
 
 export function CallCenterSetupBanner() {
-  const voice = isTwilioVoiceConfigured();
-  const sms = isTwilioConfigured();
+  const bridge = isGatewayConfigured();
   const inbound = isAdminConfigured();
 
-  if (voice && sms && inbound) {
+  if (bridge && inbound) {
     return null;
   }
 
   return (
     <aside className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-      <p className="font-medium">Call center from this PC needs Twilio</p>
+      <p className="font-medium">Call center from this PC needs the office gateway</p>
       <ul className="mt-1 list-disc pl-5">
-        {!voice ? <li>Voice: add Twilio API key + TwiML App (see README).</li> : null}
-        {!sms ? (
-          <li>SMS: add TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER.</li>
+        {!bridge ? (
+          <li>
+            Add `GATEWAY_BRIDGE_URL` so the dashboard can reach your local PBX/gateway
+            bridge.
+          </li>
         ) : null}
         {!inbound ? (
-          <li>Inbox replies: add SUPABASE_SERVICE_ROLE_KEY (server only) for inbound webhooks.</li>
+          <li>
+            Add `SUPABASE_SERVICE_ROLE_KEY` so inbound SMS/call events can be written
+            from gateway webhooks.
+          </li>
         ) : null}
       </ul>
       <p className="mt-1">
-        A computer has no SIM. Unli on the physical phone does not carry these calls.
+        Caller ID stays on your business SIM ({getCallerIdDisplay()}) when the gateway
+        hardware and PBX are configured correctly.
       </p>
     </aside>
   );

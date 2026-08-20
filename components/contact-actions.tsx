@@ -2,8 +2,8 @@ import { BrowserCallButton } from "@/components/browser-call-button";
 import { CustomerMessaging } from "@/components/customer-messaging";
 import { getBusinessPhone } from "@/lib/business-phone";
 import { formatPhone } from "@/lib/format";
+import { getCallerIdDisplay, isGatewayConfigured } from "@/lib/gateway";
 import { inboxPath, telLink } from "@/lib/phone-links";
-import { getOutboundCallerId, isTwilioVoiceConfigured } from "@/lib/twilio";
 import type { ParcelStatus } from "@/lib/types";
 import Link from "next/link";
 
@@ -27,8 +27,8 @@ export function ContactActions({
           customerPhone={customerPhone}
           customerName={customerName}
           orderId={orderId}
-          voiceReady={isTwilioVoiceConfigured()}
-          callerIdDisplay={getOutboundCallerId()}
+          voiceReady={isGatewayConfigured()}
+          callerIdDisplay={getCallerIdDisplay()}
           label="Call from this PC"
         />
         <a
@@ -48,8 +48,8 @@ export function ContactActions({
         </span>
       </div>
       <p className="text-xs text-muted">
-        PC call/SMS uses Twilio (not Unli). Physical phone still uses{" "}
-        {formatPhone(getBusinessPhone())}.
+        PC call/SMS goes through your SIM gateway box. Physical phone fallback still
+        uses {formatPhone(getBusinessPhone())}.
       </p>
       <CustomerMessaging
         customerName={customerName}
