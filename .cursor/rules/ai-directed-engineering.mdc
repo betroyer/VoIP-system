@@ -1,0 +1,29 @@
+---
+description: AI-directed engineering — theory in this project's Obsidian memory bank, plan before code
+alwaysApply: true
+---
+
+# AI-directed engineering (VoIP / Customer Contact)
+
+This vault is **separate** from the Brent/PYX memory bank. Do not write VoIP notes into `Documents/brent/_System_Core/`.
+
+## Default workflow
+
+1. **Theory** — Read `_System_Core/001_System_State.md` for **Active Spec** and **Active Plan**.
+2. **Plan** — For non-trivial work, update `_System_Core/plans/active/` and get approval before large code changes.
+3. **Implement** — Follow [[000_System_Architecture]] and [[003_Fragile_Edges]].
+4. **Record** — Append `_System_Core/002_Memory_Bank.md`. Archive the plan.
+
+## Small fixes
+
+Trivial fixes may skip a formal plan. Still log in `002_Memory_Bank.md`.
+
+## Chat trigger
+
+If the user says **"save to memory bank"**, log here (`VoIP system/_System_Core/`), not in the Brent vault.
+
+## Never
+
+- Put application code inside `_System_Core/`
+- Commit `.env.local`, service role keys, or access tokens
+- Use the global `diobrandedd` git identity in this repo — local git user is `betroyer`

@@ -1,4 +1,5 @@
 import { signOut } from "@/lib/actions";
+import { BusinessPhoneBanner } from "@/components/business-phone-banner";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -35,6 +36,7 @@ export function AppShell({
             ))}
           </nav>
           <div className="flex items-center gap-3 text-sm text-white/70">
+            <BusinessPhoneBanner compact />
             <span className="hidden sm:inline">{email}</span>
             <form action={signOut}>
               <button

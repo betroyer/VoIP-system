@@ -1,10 +1,13 @@
 import { NetworkBadge, OutcomeBadge, StatusBadge } from "@/components/badges";
+import { ContactActions } from "@/components/contact-actions";
 import { ContactLogForm } from "@/components/contact-log-form";
 import { CopyButton } from "@/components/copy-button";
 import { OrderForm } from "@/components/order-form";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
 import { StaffPage, requireStaff } from "@/lib/auth";
+import { getBusinessPhone } from "@/lib/business-phone";
 import { formatDateTime, formatPhone, labelContactType } from "@/lib/format";
+import { isTwilioConfigured, isTwilioVoiceConfigured } from "@/lib/twilio";
 import type { ContactLog, Customer, OrderWithCustomer } from "@/lib/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -79,11 +82,30 @@ export default async function OrderDetailPage({
         {DISCLOSURE_SCRIPT}
       </p>
 
+      <section className="mt-6 rounded-xl border border-line bg-card p-5 shadow-sm">
+        <h2 className="font-semibold">Contact customer</h2>
+        <p className="mt-1 text-sm text-muted">
+          Call or message from here, then save the outcome below.
+        </p>
+        <div className="mt-4">
+          <ContactActions
+            customerName={customer.name}
+            customerPhone={customer.phone_number}
+            orderId={record.id}
+            parcelStatus={record.parcel_status}
+            trackingNumber={record.tracking_number}
+            twilioSms={isTwilioConfigured()}
+            voiceReady={isTwilioVoiceConfigured()}
+            callerIdDisplay={formatPhone(getBusinessPhone())}
+          />
+        </div>
+      </section>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="rounded-xl border border-line bg-card p-5 shadow-sm">
           <h2 className="font-semibold">Log call or SMS</h2>
           <p className="mt-1 text-sm text-muted">
-            Place the call or text on the business phone, then save the outcome.
+            After the call or text, record what happened.
           </p>
           <div className="mt-4">
             <ContactLogForm orderId={record.id} currentStatus={record.parcel_status} />

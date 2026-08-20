@@ -1,9 +1,13 @@
 import { NetworkBadge, OutcomeBadge, StatusBadge } from "@/components/badges";
+import { BusinessPhoneBanner } from "@/components/business-phone-banner";
+import { ContactActions } from "@/components/contact-actions";
 import { ContactLogForm } from "@/components/contact-log-form";
 import { CopyButton } from "@/components/copy-button";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
 import { StaffPage, requireStaff } from "@/lib/auth";
+import { getBusinessPhone } from "@/lib/business-phone";
 import { formatDateTime, formatPhone, manilaStartOfTodayIso } from "@/lib/format";
+import { isTwilioConfigured, isTwilioVoiceConfigured } from "@/lib/twilio";
 import type { OrderWithCustomer } from "@/lib/types";
 import Link from "next/link";
 
@@ -36,13 +40,17 @@ export default async function QueuePage() {
     return last?.outcome === "no_answer" || last?.outcome === "busy";
   }).length;
 
+  const twilioSms = isTwilioConfigured();
+  const voiceReady = isTwilioVoiceConfigured();
+  const callerIdDisplay = formatPhone(getBusinessPhone());
+
   return (
     <StaffPage>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Today&apos;s queue</h1>
           <p className="mt-1 text-sm text-muted">
-            Call or text from the business phone, then log the outcome here.
+            Call from this PC or message the customer, then log the outcome.
           </p>
         </div>
         <Link
@@ -57,6 +65,10 @@ export default async function QueuePage() {
         <Stat label="Need contact" value={orders.length} />
         <Stat label="No answer / busy" value={noAnswer} />
         <Stat label="Logged today" value={loggedToday} />
+      </div>
+
+      <div className="mt-5">
+        <BusinessPhoneBanner />
       </div>
 
       <aside className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
@@ -89,12 +101,9 @@ export default async function QueuePage() {
                       {customer.name}
                     </Link>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
-                      <a
-                        href={`tel:${customer.phone_number}`}
-                        className="font-mono text-base font-medium"
-                      >
+                      <span className="font-mono text-base font-medium">
                         {formatPhone(customer.phone_number)}
-                      </a>
+                      </span>
                       <CopyButton value={customer.phone_number} />
                       <NetworkBadge value={customer.network} />
                       <StatusBadge value={order.parcel_status} />
@@ -119,6 +128,18 @@ export default async function QueuePage() {
                 ) : (
                   <p className="mt-3 text-sm text-muted">No contact yet.</p>
                 )}
+                <div className="mt-4">
+                  <ContactActions
+                    customerName={customer.name}
+                    customerPhone={customer.phone_number}
+                    orderId={order.id}
+                    parcelStatus={order.parcel_status}
+                    trackingNumber={order.tracking_number}
+                    twilioSms={twilioSms}
+                    voiceReady={voiceReady}
+                    callerIdDisplay={callerIdDisplay}
+                  />
+                </div>
                 <details className="mt-4 rounded-lg border border-line bg-background px-3 py-2">
                   <summary className="cursor-pointer text-sm font-medium">
                     Quick-log outcome
