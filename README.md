@@ -2,7 +2,16 @@
 
 Private staff dashboard for a small **PH call center on a computer**: dial from **Contact**, text from **Inbox** (Messenger-style), plus a parcel **Queue**.
 
-## Two ways to reach customers
+## Android staff app (Plan v7 — primary)
+
+Install the Flutter app on the business Android phone:
+
+- **Install page:** `/releases` on your deployed site (or locally `http://localhost:3000/releases`)
+- **GitHub Releases:** [betroyer/VoIP-system releases](https://github.com/betroyer/VoIP-system/releases)
+
+See `mobile/README.md` for dev setup and `mobile/scripts/patch_telephony.sh` (required before building APK locally).
+
+## Legacy PC dashboard
 
 | Mode | How it works |
 |------|----------------|
@@ -21,13 +30,20 @@ A PC has no SIM, so the dashboard must hand off calls/texts to a gateway box or 
 
 1. Confirm with the telco that the chosen business SIM plan allows gateway / PBX use.
 2. Register the business SIM, then install it in the gateway box.
-3. Configure a local bridge service or PBX that can:
-   - send SMS
-   - start outbound calls
-   - POST inbound SMS to `https://voip-system.vercel.app/api/gateway/messages/incoming`
-   - POST call outcomes to `https://voip-system.vercel.app/api/gateway/calls/events`
-4. Run `supabase/messages.sql` in the Supabase SQL editor.
-5. On Vercel, add env vars from `.env.example` (`GATEWAY_*`, `SUPABASE_SERVICE_ROLE_KEY`), then **redeploy**.
+3. Run the local bridge in `gateway-bridge/` (see `gateway-bridge/README.md` and `gateway-bridge/SPEC.md`).
+4. Bridge must:
+   - accept `/sms/send` and `/calls/start` from the dashboard
+   - POST inbound SMS to `/api/gateway/messages/incoming`
+   - POST call outcomes to `/api/gateway/calls/events`
+5. Run `supabase/messages.sql` in the Supabase SQL editor.
+6. Set env vars from `.env.example` (`GATEWAY_*`, `SUPABASE_SERVICE_ROLE_KEY`).
+
+Local dev:
+
+```bash
+npm run bridge:dev
+npm run dev
+```
 
 Until those vars are set, Contact/Inbox show a setup banner. **Call on phone** still works.
 
