@@ -83,7 +83,7 @@ export default async function OrderDetailPage({
       <section className="mt-6 rounded-xl border border-line bg-card p-5 shadow-sm">
         <h2 className="font-semibold">Contact customer</h2>
         <p className="mt-1 text-sm text-muted">
-          Call or message using the business phone, then save the outcome below.
+          Call or message from this PC (Contact/Inbox) or the business phone, then save the outcome below.
         </p>
         <div className="mt-4">
           <ContactActions

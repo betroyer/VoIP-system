@@ -15,7 +15,7 @@
 | `--accent-hover` | `#0b4c49` | Button hover |
 | `--danger` | `#b42318` | Errors |
 
-Header bar is `#102422` (not a CSS token). Do not introduce a dark-mode theme unless a spec asks for it.
+Header bar is `#102422` (not a CSS token). Nav includes Queue, Contact, Inbox, Orders, Customers, Logs.
 
 ## Type
 

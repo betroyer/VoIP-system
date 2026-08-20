@@ -1,37 +1,38 @@
 # Product Theory — Customer Contact System
 
-> Source: Customer_Contact_System_Plan_v3.docx. Technical how-to: [[000_System_Architecture]].
+> Source: call-center spec + Plan v3 phone fallback. Technical how-to: [[000_System_Architecture]].
 
 ## Vision
 
-A cheap, private web dashboard so staff can contact local Philippine customers about parcel status using a **business phone** (SIM **09943282611** + Unli All-Net). The site is the list and the logbook. Calls and texts are **not** placed by Twilio or any international VoIP API.
+A cheap, private web dashboard so staff can contact local Philippine customers about parcels **from a computer** (Contact + Inbox) or from a **business phone** (SIM **09171392170** + Unli All-Net).
 
 ## Who uses it
 
 | User | Jobs |
 |------|------|
-| **Staff** | Open queue, call/text from the business phone, log outcome |
+| **Staff** | Dial from Contact, text from Inbox, work the parcel Queue |
 | **Customer** | Receives call/SMS on TNT / Smart / Globe — they never log in |
 
 ## Domain principles
 
-1. **Local and low-cost** — Unli All-Net promo, not per-minute APIs.
-2. **Manual contact** — staff dial and text from the phone with 09943282611.
-3. **Private by login** — Supabase Auth; no public sign-up.
-4. **Upgrade later without a rewrite** — data layer survives a future SMS gateway if volume ever requires it.
+1. **PH only** — `+63` / `09` destinations.
+2. **PC agents need a phone API** — Twilio Voice + SMS; Unli does not apply to WebRTC.
+3. **Phone agents stay cheap** — Unli on the physical SIM still works via `tel:` / `sms:`.
+4. **Private by login** — Supabase Auth; no public sign-up.
 5. **Consent if recording** — RA 4200.
 
 ## How call/SMS works
 
 | Action | Behavior |
 |--------|----------|
-| **Call customer** | Opens the device phone app (`tel:`). Use the dashboard **on the business phone** so the call uses 09943282611 + Unli. |
-| **Message customer** | Opens the device SMS app with a template. Same SIM. Then log the outcome in the dashboard. |
+| **Contact → Call** | Twilio Voice in the browser when keys are set |
+| **Inbox → Send** | Twilio SMS; inbound webhook fills the thread |
+| **Call on phone** | Opens the device phone app (`tel:`) on SIM 09171392170 |
 
-## Non-goals (unless a new spec says otherwise)
+## Non-goals
 
-- Twilio / international VoIP
-- GSM modem / auto-dialer
+- Auto-dialer / ACD / IVR
+- Non-PH numbers
 - Customer self-serve portal
 - Public registration
 
@@ -39,3 +40,4 @@ A cheap, private web dashboard so staff can contact local Philippine customers a
 
 - [[specs/TEMPLATE_Feature_Spec]]
 - [[specs/2026-08-20_customer-contact-system]]
+- [[specs/2026-08-20_call-center-contact-inbox]]

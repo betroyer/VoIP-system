@@ -48,6 +48,27 @@ export type Order = {
   updated_at: string;
 };
 
+export type MessageDirection = "inbound" | "outbound";
+
+export type Message = {
+  id: string;
+  phone_number: string;
+  customer_id: string | null;
+  staff_id: string | null;
+  direction: MessageDirection;
+  body: string;
+  created_at: string;
+  provider_sid: string | null;
+};
+
+export type InboxThread = {
+  phone_number: string;
+  last_body: string;
+  last_at: string;
+  direction: MessageDirection;
+  customer: Pick<Customer, "id" | "name" | "phone_number"> | null;
+};
+
 export type ContactLog = {
   id: string;
   order_id: string;

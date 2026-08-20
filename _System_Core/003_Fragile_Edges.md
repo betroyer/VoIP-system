@@ -49,6 +49,18 @@ On order edit, `customer_id` is disabled. `updateOrder` must not require it from
 
 Bucket `call-recordings` is not public. Store the storage **path** in `contact_logs.recording_link`, then signed URLs when playing back.
 
+## Twilio webhooks must skip login
+
+`/api/voice/twiml` and `/api/sms/incoming` are allowlisted in `lib/supabase/proxy.ts`. `TWILIO_VOICE_WEBHOOK_URL` / `TWILIO_SMS_WEBHOOK_URL` must match the public URL Twilio posts to (signature check).
+
+## Service role is server-only
+
+`SUPABASE_SERVICE_ROLE_KEY` is used only in `lib/supabase/admin.ts` for inbound SMS. Never prefix with `NEXT_PUBLIC_`.
+
+## PC calling is not Unli
+
+WebRTC audio goes through Twilio minutes. Caller ID is `TWILIO_CALLER_ID` only if that mobile is verified in Twilio.
+
 ## RA 4200
 
 Recording a call in the Philippines generally needs consent. Staff should say: “This call may be recorded for quality purposes.” The dashboard reminder is not a substitute for saying it on the call.

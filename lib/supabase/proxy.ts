@@ -31,8 +31,10 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
+  const isTwilioWebhook =
+    path === "/api/voice/twiml" || path === "/api/sms/incoming";
 
-  if (!user && !isLogin) {
+  if (!user && !isLogin && !isTwilioWebhook) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

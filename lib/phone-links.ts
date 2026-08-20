@@ -1,13 +1,25 @@
 import { labelStatus } from "@/lib/format";
 import type { ParcelStatus } from "@/lib/types";
 
-/** Normalize Philippine mobile numbers for tel:/sms: links. */
-export function normalizePhoneDigits(phone: string) {
+/** Canonical 09XXXXXXXXX key for inbox URLs and matching. */
+export function phoneKey(phone: string) {
   const digits = phone.replace(/\D/g, "");
-  if (digits.length === 12 && digits.startsWith("63")) {
+  if (digits.startsWith("63") && digits.length >= 12) {
     return `0${digits.slice(2)}`;
   }
+  if (digits.length === 10 && digits.startsWith("9")) {
+    return `0${digits}`;
+  }
   return digits;
+}
+
+export function inboxPath(phone: string) {
+  return `/inbox/${phoneKey(phone)}`;
+}
+
+/** Normalize Philippine mobile numbers for tel:/sms: links. */
+export function normalizePhoneDigits(phone: string) {
+  return phoneKey(phone);
 }
 
 export function telLink(phone: string) {
@@ -33,6 +45,11 @@ export function toE164(phone: string) {
     return `+63${digits}`;
   }
   return `+${digits}`;
+}
+
+export function isPhilippineNumber(phone: string) {
+  const e164 = toE164(phone);
+  return /^\+63\d{9,10}$/.test(e164);
 }
 
 export function defaultSmsBody(

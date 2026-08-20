@@ -4,6 +4,16 @@
 
 ## Recent log entries
 
+### 2026-08-20 — Call center Contact + Inbox (from PC)
+
+Staff asked for computer calling and Messenger-style SMS. Added **Contact** (dial pad) and **Inbox** (threads + call). Twilio Voice/SMS is required for the PC path; Unli SIM remains phone fallback. Plan v3 is superseded for desktop agents by spec `2026-08-20_call-center-contact-inbox`.
+
+**Key files:** `app/contact/`, `app/inbox/`, `app/api/voice/`, `app/api/sms/incoming/`, `supabase/messages.sql`
+
+### 2026-08-20 — Business phone set to 09171392170
+
+Outbound SIM shown in the dashboard is now **09171392170** (was 09943282611).
+
 ### 2026-08-20 — Removed Twilio; back to Plan v3
 
 In-browser Twilio Voice/SMS was a detour. Plan v3 forbids international VoIP APIs. Calls and texts are again **manual on the business phone** (09943282611 + Unli). Dashboard = queue + logbook.

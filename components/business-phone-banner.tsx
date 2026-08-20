@@ -25,8 +25,8 @@ export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) 
         <CopyButton value={phone} label="Copy" />
       </div>
       <p className="mt-2 text-sm text-muted">
-        Place every call and SMS on this phone. The website is the queue and logbook — not
-        Twilio or any internet calling API. Load your Unli promo on this SIM.
+        Unli All-Net still applies when you call from this physical SIM. Calls from the
+        computer (Contact / Inbox) go through Twilio, not this promo.
       </p>
     </aside>
   );

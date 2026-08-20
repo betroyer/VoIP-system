@@ -5,6 +5,7 @@ import { ContactLogForm } from "@/components/contact-log-form";
 import { CopyButton } from "@/components/copy-button";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
 import { StaffPage, requireStaff } from "@/lib/auth";
+import { getBusinessPhone } from "@/lib/business-phone";
 import { formatDateTime, formatPhone, manilaStartOfTodayIso } from "@/lib/format";
 import type { OrderWithCustomer } from "@/lib/types";
 import Link from "next/link";
@@ -44,7 +45,8 @@ export default async function QueuePage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Today&apos;s queue</h1>
           <p className="mt-1 text-sm text-muted">
-            Call or text from the business phone (0994 328 2611), then log the outcome here.
+            Call or text from Contact / Inbox on this PC, or from the business phone (
+            {formatPhone(getBusinessPhone())}), then log the outcome here.
           </p>
         </div>
         <Link

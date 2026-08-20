@@ -3,8 +3,8 @@
 ## Project Overview
 
 - **Project Name:** Customer Contact System (repo folder: VoIP system)
-- **Primary Goal:** Private web dashboard so staff can see which parcel customers to contact, place the call/SMS **manually on a business phone** (SIM **09943282611** + Unli All-Net), and log the outcome.
-- **Not:** Twilio, international VoIP APIs, SIP trunks, GSM gateways, or auto-dialing. That is explicit in Plan v3.
+- **Primary Goal:** Private web dashboard so staff can **call and text from a computer** (Contact + Inbox) like a small call center, and still log parcel follow-up. Physical SIM **09171392170** + Unli remains a fallback (`tel:` / `sms:`).
+- **Not:** Auto-dialer / IVR. International (non-PH) numbers.
 
 ## Tech stack
 
@@ -14,7 +14,7 @@
 | Auth + DB + storage | Supabase (Postgres, Auth, Storage, RLS) |
 | Hosting | Vercel (`betroyers-projects` / `voip-system`) |
 | GitHub | `betroyer/VoIP-system` (HTTPS remote) |
-| Contact | Physical business phone + Unli All-Net promo |
+| Contact | Twilio Voice (PC) or business phone + Unli |
 
 ## Accounts (keep separate from Brent/PYX)
 
@@ -28,7 +28,7 @@
 ## Folder structure
 
 - `_System_Core/` → Obsidian memory bank (**no application code**)
-- `app/` → Next.js routes (`/`, `/login`, `/customers`, `/orders`, `/logs`)
+- `app/` → Next.js routes (`/`, `/contact`, `/inbox`, `/login`, `/customers`, `/orders`, `/logs`)
 - `components/` → Dashboard UI
 - `lib/` → Supabase clients, server actions, types
 - `proxy.ts` → Next.js 16 auth gate (Supabase session)
@@ -40,7 +40,9 @@
 |----------|--------|---------|
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` + Vercel | `https://dphjtppwsdjbbrmaofje.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` + Vercel | Public anon key (RLS-protected) |
-| `NEXT_PUBLIC_BUSINESS_PHONE` | `.env.local` + Vercel | Business SIM shown in the UI (`09943282611`) |
+| `NEXT_PUBLIC_BUSINESS_PHONE` | `.env.local` + Vercel | Fallback SIM shown in the UI (`09171392170`) |
+| `TWILIO_*` | `.env.local` + Vercel (server) | PC calling and SMS |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` + Vercel (server only) | Inbound SMS webhook inserts |
 
 Never commit `.env.local`, service role, or `sbp_` personal access tokens.
 
@@ -53,7 +55,7 @@ Never commit `.env.local`, service role, or `sbp_` personal access tokens.
 
 ## Critical rules
 
-- Follow [[specs/2026-08-20_customer-contact-system]] (Plan v3). Do not add Twilio unless a new spec supersedes it.
+- Follow [[specs/2026-08-20_call-center-contact-inbox]] for PC Contact/Inbox. Plan v3 phone-only is still valid as a fallback.
 - Read [[001_System_State]] before new features.
 - Log shipped work in [[002_Memory_Bank]].
 - Document traps in [[003_Fragile_Edges]].

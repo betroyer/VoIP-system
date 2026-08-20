@@ -6,31 +6,30 @@
 
 | Field | Link |
 |-------|------|
-| **Active Spec** | [[specs/2026-08-20_customer-contact-system]] |
-| **Active Plan** | — |
-| **Status** | `setup` — data layer + dashboard deployed; staff logins still needed |
+| **Active Spec** | [[specs/2026-08-20_call-center-contact-inbox]] |
+| **Active Plan** | [[plans/active/2026-08-20_call-center-contact-inbox]] |
+| **Status** | `build` — Contact + Inbox UI shipped; Twilio env + `messages.sql` still needed for live PC calls/SMS |
 
 ## Active feature / sprint
 
-- **Current focus:** Follow Plan v3 — Unli phone workflow, staff logins, no Twilio
-- **Latest shipped:** Next.js dashboard, schema on Supabase, Vercel production with env vars (2026-08-20)
-- **Next:** Create two Auth users; turn off sign-up; install Vercel GitHub app; optional custom subdomain
+- **Current focus:** Call-center from the PC (Contact dialer, Inbox SMS)
+- **Latest shipped:** Dial pad, Inbox threads, Twilio Voice/SMS wiring (2026-08-20)
+- **Next:** Run `supabase/messages.sql`; add Twilio + service role env on Vercel; verify caller ID `+639171392170`
 
 ## Current todo
 
-- [x] Local git identity for **betroyer** (this repo only)
-- [x] GitHub repo `betroyer/VoIP-system`
-- [x] Apply `supabase/schema.sql` to project `dphjtppwsdjbbrmaofje`
-- [x] Save anon key in `.env.local`
-- [x] Deploy to Vercel with Supabase env vars
-- [ ] Create exactly two Supabase Auth users (owner + coworker)
-- [ ] Disable public sign-up in Supabase Auth
-- [ ] Connect GitHub repo to Vercel (GitHub app install)
-- [ ] Load Unli All-Net promo on SIM 09943282611 (Phase 3)
-- [ ] Call recording + RA 4200 disclosure in daily use (Phase 4)
+- [x] Contact page (dial pad)
+- [x] Inbox threads + composer
+- [x] Twilio Voice token/TwiML + inbound SMS webhook
+- [ ] Run `messages.sql` on Supabase
+- [ ] Twilio account, TwiML App, verified caller ID
+- [ ] Vercel env: `TWILIO_*` + `SUPABASE_SERVICE_ROLE_KEY`
+- [ ] Disable public sign-up; staff Auth users
+- [ ] Connect GitHub repo to Vercel GitHub app
 
 ## Known blockers
 
-- **Staff login:** Dashboard is live but nobody can sign in until two users exist in [Auth → Users](https://supabase.com/dashboard/project/dphjtppwsdjbbrmaofje/auth/users).
-- **Vercel Git:** CLI deploy works; `git push` does not auto-deploy until the [Vercel GitHub app](https://github.com/apps/vercel/installations/new) is installed on `betroyer/VoIP-system`.
-- **Access token:** A Supabase PAT was used in chat to run SQL — rotate it at [Account → Access Tokens](https://supabase.com/dashboard/account/tokens) if it is still active.
+- **PC audio/SMS:** Will not leave the computer until Twilio keys are set.
+- **Inbox table:** Sending fails until `public.messages` exists.
+- **Inbound SMS:** Needs Twilio number webhook + service role key.
+- **Vercel Git:** CLI deploy works; `git push` auto-deploy needs the GitHub app.

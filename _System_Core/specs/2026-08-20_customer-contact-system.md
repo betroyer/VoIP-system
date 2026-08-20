@@ -19,7 +19,7 @@ Staff (owner + coworkers). Customers only receive the call/SMS.
 - [x] Login-only dashboard on Vercel
 - [x] Queue of orders needing contact + Call / Message (device phone) + quick-log
 - [ ] Staff Auth users created; public sign-up off
-- [ ] Unli All-Net promo loaded on SIM 09943282611
+- [ ] Unli All-Net promo loaded on SIM 09171392170
 - [ ] Optional recordings with RA 4200 disclosure
 
 ## Business / UX rules
@@ -39,7 +39,7 @@ Staff (owner + coworkers). Customers only receive the call/SMS.
 
 1. Data layer (Supabase) — **done**
 2. Web dashboard + Vercel — **done**
-3. Phone + Unli All-Net promo on 09943282611
+3. Phone + Unli All-Net promo on 09171392170
 4. Call recording + disclosure
 5. Daily workflow
 6. Reporting / follow-up

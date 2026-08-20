@@ -2,6 +2,8 @@
 
 import { sendCustomerSms, type SmsActionState } from "@/lib/actions";
 import { SMS_TEMPLATES, statusLabelForSms } from "@/lib/sms-templates";
+import { getBusinessPhone } from "@/lib/business-phone";
+import { formatPhone } from "@/lib/format";
 import { defaultSmsBody } from "@/lib/phone-links";
 import type { ParcelStatus } from "@/lib/types";
 import { useActionState, useEffect, useState } from "react";
@@ -93,12 +95,13 @@ export function CustomerMessaging({
             disabled={pending}
             className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-60"
           >
-            {pending ? "Opening…" : "Open SMS on business phone"}
+            {pending ? "Sending…" : "Send from this PC"}
           </button>
           <p className="text-xs text-muted">
-            Opens the phone SMS app on the device with SIM 09943282611. Then log
-            the outcome in the form below.
+            With Twilio, the text leaves this computer. Without it, this opens the phone SMS
+            app for SIM {formatPhone(getBusinessPhone())}.
           </p>
+          {state.sent ? <p className="text-sm text-accent">Message sent.</p> : null}
         </form>
       ) : null}
     </div>

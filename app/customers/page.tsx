@@ -1,6 +1,7 @@
 import { NetworkBadge } from "@/components/badges";
 import { StaffPage, requireStaff } from "@/lib/auth";
 import { formatPhone } from "@/lib/format";
+import { inboxPath } from "@/lib/phone-links";
 import type { Customer } from "@/lib/types";
 import Link from "next/link";
 
@@ -45,6 +46,7 @@ export default async function CustomersPage() {
                 <th className="px-4 py-3 font-medium">Phone</th>
                 <th className="px-4 py-3 font-medium">Network</th>
                 <th className="px-4 py-3 font-medium">Address</th>
+                <th className="px-4 py-3 font-medium" />
               </tr>
             </thead>
             <tbody>
@@ -58,6 +60,14 @@ export default async function CustomersPage() {
                     <NetworkBadge value={customer.network} />
                   </td>
                   <td className="px-4 py-3 text-muted">{customer.address ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    <Link
+                      href={inboxPath(customer.phone_number)}
+                      className="text-accent hover:underline"
+                    >
+                      Inbox
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>
