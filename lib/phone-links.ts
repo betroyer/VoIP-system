@@ -20,7 +20,7 @@ export function smsLink(phone: string, body: string) {
   return `sms:${normalized}${query}`;
 }
 
-/** E.164 for SMS APIs (Twilio). */
+/** E.164 for tel:/sms: links (PH mobiles). */
 export function toE164(phone: string) {
   const digits = phone.replace(/\D/g, "");
   if (digits.startsWith("63") && digits.length >= 12) {

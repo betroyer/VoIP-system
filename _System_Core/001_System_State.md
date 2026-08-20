@@ -12,7 +12,7 @@
 
 ## Active feature / sprint
 
-- **Current focus:** Finish Phase 2 access (two Supabase users, disable public sign-up) and connect Vercel ↔ GitHub for auto-deploy
+- **Current focus:** Follow Plan v3 — Unli phone workflow, staff logins, no Twilio
 - **Latest shipped:** Next.js dashboard, schema on Supabase, Vercel production with env vars (2026-08-20)
 - **Next:** Create two Auth users; turn off sign-up; install Vercel GitHub app; optional custom subdomain
 
@@ -26,7 +26,7 @@
 - [ ] Create exactly two Supabase Auth users (owner + coworker)
 - [ ] Disable public sign-up in Supabase Auth
 - [ ] Connect GitHub repo to Vercel (GitHub app install)
-- [ ] Configure Twilio Voice so **Call from this PC** works (verify `+639943282611`)
+- [ ] Load Unli All-Net promo on SIM 09943282611 (Phase 3)
 - [ ] Call recording + RA 4200 disclosure in daily use (Phase 4)
 
 ## Known blockers

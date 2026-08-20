@@ -14,14 +14,12 @@ export function CustomerMessaging({
   orderId,
   parcelStatus,
   trackingNumber,
-  twilioSms,
 }: {
   customerName: string;
   customerPhone: string;
   orderId: string;
   parcelStatus: ParcelStatus;
   trackingNumber?: string | null;
-  twilioSms: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState(() =>
@@ -33,10 +31,7 @@ export function CustomerMessaging({
     if (state.smsLink) {
       window.location.href = state.smsLink;
     }
-    if (state.sent) {
-      setOpen(false);
-    }
-  }, [state.smsLink, state.sent]);
+  }, [state.smsLink]);
 
   function applyTemplate(templateId: string) {
     const template = SMS_TEMPLATES.find((item) => item.id === templateId);
@@ -93,28 +88,17 @@ export function CustomerMessaging({
             />
           </label>
           {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
-          {state.sent ? (
-            <p className="text-sm text-emerald-800">SMS sent and logged.</p>
-          ) : null}
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="submit"
-              disabled={pending}
-              className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-60"
-            >
-              {pending
-                ? "Sending…"
-                : twilioSms
-                  ? "Send SMS from system"
-                  : "Open SMS app to send"}
-            </button>
-          </div>
-          {!twilioSms ? (
-            <p className="text-xs text-muted">
-              Opens your device SMS app using the business SIM. For browser-only SMS,
-              add Twilio env vars on Vercel (see README).
-            </p>
-          ) : null}
+          <button
+            type="submit"
+            disabled={pending}
+            className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover disabled:opacity-60"
+          >
+            {pending ? "Opening…" : "Open SMS on business phone"}
+          </button>
+          <p className="text-xs text-muted">
+            Opens the phone SMS app on the device with SIM 09943282611. Then log
+            the outcome in the form below.
+          </p>
         </form>
       ) : null}
     </div>

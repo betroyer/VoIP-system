@@ -1,39 +1,39 @@
 # Product Theory — Customer Contact System
 
-> What this system *should be*. Technical how-to: [[000_System_Architecture]].
+> Source: Customer_Contact_System_Plan_v3.docx. Technical how-to: [[000_System_Architecture]].
 
 ## Vision
 
-A web dashboard where staff contact local Philippine customers about parcel orders — **call and message from the system** — using one shared business number (**09943282611**). Up to **10 staff** share the queue and log outcomes so nobody double-calls the same customer.
+A cheap, private web dashboard so staff can contact local Philippine customers about parcel status using a **business phone** (SIM **09943282611** + Unli All-Net). The site is the list and the logbook. Calls and texts are **not** placed by Twilio or any international VoIP API.
 
 ## Who uses it
 
 | User | Jobs |
 |------|------|
-| **Staff (up to 10)** | Open queue, call/message customer, log outcome |
-| **Customer** | Receives call/SMS on their mobile — they never log in |
+| **Staff** | Open queue, call/text from the business phone, log outcome |
+| **Customer** | Receives call/SMS on TNT / Smart / Globe — they never log in |
 
 ## Domain principles
 
-1. **Contact from the dashboard** — Call customer and Message customer on each order.
-2. **One business line** — All staff share 09943282611 (Unli All-Net on that SIM).
-3. **Team visibility** — Every attempt logged in `contact_logs`.
-4. **Private by login** — Supabase Auth; no public sign-up.
-5. **Consent if recording** — RA 4200 disclosure on calls.
+1. **Local and low-cost** — Unli All-Net promo, not per-minute APIs.
+2. **Manual contact** — staff dial and text from the phone with 09943282611.
+3. **Private by login** — Supabase Auth; no public sign-up.
+4. **Upgrade later without a rewrite** — data layer survives a future SMS gateway if volume ever requires it.
+5. **Consent if recording** — RA 4200.
 
 ## How call/SMS works
 
 | Action | Behavior |
 |--------|----------|
-| **Call from this PC** | Twilio Voice in the browser. Staff headset/mic. Dials PH `+63` numbers only. Caller ID = verified `09943282611` when Twilio accepts it. **Not** the Unli SIM carrying the call. |
-| **Call on phone** | Opens the phone dialer (use the business phone for Unli). |
-| **Message customer** | Compose in the app. Twilio SMS if configured; else device SMS app. |
+| **Call customer** | Opens the device phone app (`tel:`). Use the dashboard **on the business phone** so the call uses 09943282611 + Unli. |
+| **Message customer** | Opens the device SMS app with a template. Same SIM. Then log the outcome in the dashboard. |
 
-## Non-goals (unless spec says otherwise)
+## Non-goals (unless a new spec says otherwise)
 
+- Twilio / international VoIP
+- GSM modem / auto-dialer
 - Customer self-serve portal
 - Public registration
-- International destinations (outside PH)
 
 ## Feature specs
 

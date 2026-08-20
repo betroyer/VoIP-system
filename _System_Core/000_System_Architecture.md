@@ -3,9 +3,8 @@
 ## Project Overview
 
 - **Project Name:** Customer Contact System (repo folder: VoIP system)
-- **Primary Goal:** Private staff dashboard so up to ~10 people can **call and message PH customers from the website**, using one shared business number (**09943282611**).
-- **Voice:** In-browser calling on PC via Twilio Voice (WebRTC). Destination is limited to Philippine numbers (`+63`). Caller ID is the verified business number when Twilio allows it.
-- **Not (yet):** The Unli SIM itself carrying the audio from a PC. A browser cannot talk to a physical SIM without a GSM gateway. Twilio’s network places the call; Unli promo does not apply to those minutes.
+- **Primary Goal:** Private web dashboard so staff can see which parcel customers to contact, place the call/SMS **manually on a business phone** (SIM **09943282611** + Unli All-Net), and log the outcome.
+- **Not:** Twilio, international VoIP APIs, SIP trunks, GSM gateways, or auto-dialing. That is explicit in Plan v3.
 
 ## Tech stack
 
@@ -15,7 +14,7 @@
 | Auth + DB + storage | Supabase (Postgres, Auth, Storage, RLS) |
 | Hosting | Vercel (`betroyers-projects` / `voip-system`) |
 | GitHub | `betroyer/VoIP-system` (HTTPS remote) |
-| Phone | Business number `09943282611` as caller ID; Twilio Voice for PC calling |
+| Contact | Physical business phone + Unli All-Net promo |
 
 ## Accounts (keep separate from Brent/PYX)
 
@@ -41,14 +40,7 @@
 |----------|--------|---------|
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` + Vercel | `https://dphjtppwsdjbbrmaofje.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` + Vercel | Public anon key (RLS-protected) |
-| `NEXT_PUBLIC_BUSINESS_PHONE` | `.env.local` + Vercel | Display / intended caller ID (`09943282611`) |
-| `TWILIO_ACCOUNT_SID` | Vercel + `.env.local` | Twilio account |
-| `TWILIO_AUTH_TOKEN` | Vercel + `.env.local` | Twilio auth (server only) |
-| `TWILIO_API_KEY_SID` / `TWILIO_API_KEY_SECRET` | Vercel + `.env.local` | Voice access tokens |
-| `TWILIO_TWIML_APP_SID` | Vercel + `.env.local` | TwiML App for browser outbound |
-| `TWILIO_PHONE_NUMBER` | Vercel + `.env.local` | Twilio number (fallback caller ID / SMS) |
-| `TWILIO_CALLER_ID` | Vercel + `.env.local` | Verified PH number `+639943282611` |
-| `TWILIO_VOICE_WEBHOOK_URL` | Vercel | Exact URL `https://voip-system.vercel.app/api/voice/twiml` |
+| `NEXT_PUBLIC_BUSINESS_PHONE` | `.env.local` + Vercel | Business SIM shown in the UI (`09943282611`) |
 
 Never commit `.env.local`, service role, or `sbp_` personal access tokens.
 
@@ -61,11 +53,11 @@ Never commit `.env.local`, service role, or `sbp_` personal access tokens.
 
 ## Critical rules
 
+- Follow [[specs/2026-08-20_customer-contact-system]] (Plan v3). Do not add Twilio unless a new spec supersedes it.
 - Read [[001_System_State]] before new features.
 - Log shipped work in [[002_Memory_Bank]].
 - Document traps in [[003_Fragile_Edges]].
-- Calls and SMS from the dashboard; destinations are **Philippine numbers only**.
-- Only two **types** of staff roles for now; create up to ~10 Auth users. Public sign-up stays off.
+- Public sign-up stays off.
 
 ## Connected notes
 

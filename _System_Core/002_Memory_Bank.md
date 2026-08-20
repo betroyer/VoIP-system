@@ -4,6 +4,12 @@
 
 ## Recent log entries
 
+### 2026-08-20 — Removed Twilio; back to Plan v3
+
+In-browser Twilio Voice/SMS was a detour. Plan v3 forbids international VoIP APIs. Calls and texts are again **manual on the business phone** (09943282611 + Unli). Dashboard = queue + logbook.
+
+**Key files:** removed `app/api/voice/`, `lib/twilio*.ts`, `@twilio/voice-sdk`
+
 ### 2026-08-20 — In-browser PC calling (Twilio Voice)
 
 Staff can **Call from this PC** with microphone. TwiML dials PH numbers only; caller ID env `TWILIO_CALLER_ID` defaults toward `+639943282611`. Unli SIM cannot carry PC audio — Twilio minutes apply after keys are set.

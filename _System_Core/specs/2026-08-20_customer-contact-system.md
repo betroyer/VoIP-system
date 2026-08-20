@@ -1,39 +1,49 @@
 ---
 status: active
-source: Customer_Contact_System_Plan_v3.docx + 2026-08-20 PC calling
+source: Customer_Contact_System_Plan_v3.docx
 ---
 
-# Spec — Customer Contact System
+# Spec — Customer Contact System (v3 plan)
 
 ## Problem
 
-Staff need to **call and message PH customers from the website on a PC**, using one business number, and log outcomes.
+Staff need a private list of parcel customers to call or text about order status, then a place to log what happened — **without Twilio** or extra calling hardware.
 
 ## Users
 
-Up to ~10 staff. Customers only receive the call/SMS.
+Staff (owner + coworkers). Customers only receive the call/SMS.
 
 ## Success criteria
 
 - [x] Data layer: customers, orders, contact_logs, staff
 - [x] Login-only dashboard on Vercel
-- [x] Queue + Call from PC (Twilio Voice) + Message + log
-- [ ] Twilio Voice env configured and caller ID `+639943282611` verified
+- [x] Queue of orders needing contact + Call / Message (device phone) + quick-log
 - [ ] Staff Auth users created; public sign-up off
+- [ ] Unli All-Net promo loaded on SIM 09943282611
+- [ ] Optional recordings with RA 4200 disclosure
 
 ## Business / UX rules
 
-- Destinations: **Philippine numbers only** (`+63`).
-- Caller ID: business line **09943282611** when Twilio verifies it.
-- PC calling uses Twilio Voice (not Unli SIM audio).
-- Privacy is authentication; no public sign-up.
-- Recording: RA 4200 disclosure on calls.
+- Contact is **manual** from the business phone (TNT/Smart/Globe Unli).
+- Privacy is authentication, not hiding the URL.
+- Monthly cost target is the Unli promo (~₱150–500), not per-minute APIs.
+- Recording: say “This call may be recorded for quality purposes.” (RA 4200)
 
 ## Out of scope
 
-- International (non-PH) destinations
+- Twilio / international VoIP APIs
+- Auto-dialer / GSM gateway
 - Customer-facing app
-- Auto-dialer blasting
+
+## Phases
+
+1. Data layer (Supabase) — **done**
+2. Web dashboard + Vercel — **done**
+3. Phone + Unli All-Net promo on 09943282611
+4. Call recording + disclosure
+5. Daily workflow
+6. Reporting / follow-up
+7. Future SMS automation only if volume requires it (not Twilio Voice)
 
 ## Links
 

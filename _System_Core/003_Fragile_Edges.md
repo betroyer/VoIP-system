@@ -49,15 +49,6 @@ On order edit, `customer_id` is disabled. `updateOrder` must not require it from
 
 Bucket `call-recordings` is not public. Store the storage **path** in `contact_logs.recording_link`, then signed URLs when playing back.
 
-## In-browser calling (Twilio Voice)
-
-- Destinations must be Philippine (`+63`). International numbers are rejected in TwiML.
-- `TWILIO_VOICE_WEBHOOK_URL` must **exactly** match the TwiML App Voice URL or signature checks fail.
-- `/api/voice/twiml` is public (Twilio posts here) but validated with `X-Twilio-Signature`.
-- `/api/voice/token` requires a logged-in staff session.
-- Verifying a personal PH prepaid as Twilio Caller ID often fails. Fallback is a Twilio number as `TWILIO_PHONE_NUMBER`.
-- PC calls are **not** billed to Unli All-Net.
-
 ## RA 4200
 
 Recording a call in the Philippines generally needs consent. Staff should say: “This call may be recorded for quality purposes.” The dashboard reminder is not a substitute for saying it on the call.

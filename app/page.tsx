@@ -5,9 +5,7 @@ import { ContactLogForm } from "@/components/contact-log-form";
 import { CopyButton } from "@/components/copy-button";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
 import { StaffPage, requireStaff } from "@/lib/auth";
-import { getBusinessPhone } from "@/lib/business-phone";
 import { formatDateTime, formatPhone, manilaStartOfTodayIso } from "@/lib/format";
-import { isTwilioConfigured, isTwilioVoiceConfigured } from "@/lib/twilio";
 import type { OrderWithCustomer } from "@/lib/types";
 import Link from "next/link";
 
@@ -40,17 +38,13 @@ export default async function QueuePage() {
     return last?.outcome === "no_answer" || last?.outcome === "busy";
   }).length;
 
-  const twilioSms = isTwilioConfigured();
-  const voiceReady = isTwilioVoiceConfigured();
-  const callerIdDisplay = formatPhone(getBusinessPhone());
-
   return (
     <StaffPage>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Today&apos;s queue</h1>
           <p className="mt-1 text-sm text-muted">
-            Call from this PC or message the customer, then log the outcome.
+            Call or text from the business phone (0994 328 2611), then log the outcome here.
           </p>
         </div>
         <Link
@@ -135,9 +129,6 @@ export default async function QueuePage() {
                     orderId={order.id}
                     parcelStatus={order.parcel_status}
                     trackingNumber={order.tracking_number}
-                    twilioSms={twilioSms}
-                    voiceReady={voiceReady}
-                    callerIdDisplay={callerIdDisplay}
                   />
                 </div>
                 <details className="mt-4 rounded-lg border border-line bg-background px-3 py-2">

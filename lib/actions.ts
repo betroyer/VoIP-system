@@ -2,14 +2,12 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { smsLink } from "@/lib/phone-links";
-import { isPhilippineNumber, isTwilioConfigured, sendTwilioSms } from "@/lib/twilio";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export type ActionState = { error: string | null };
 export type SmsActionState = ActionState & {
   smsLink?: string;
-  sent?: boolean;
 };
 
 export async function signOut() {
@@ -207,68 +205,5 @@ export async function sendCustomerSms(
     return { error: "Message and customer number are required." };
   }
 
-  if (!isPhilippineNumber(phone_number)) {
-    return { error: "SMS is limited to Philippine numbers." };
-  }
-
-  if (isTwilioConfigured()) {
-    const result = await sendTwilioSms(phone_number, body);
-    if (!result.ok) {
-      return { error: result.error };
-    }
-
-    const { error } = await supabase.from("contact_logs").insert({
-      order_id,
-      staff_id: user.id,
-      contact_type: "sms",
-      outcome: "sent",
-      notes: body.slice(0, 500),
-    });
-
-    if (error) {
-      return { error: error.message };
-    }
-
-    revalidatePath("/");
-    revalidatePath("/orders");
-    revalidatePath(`/orders/${order_id}`);
-    revalidatePath("/logs");
-    return { error: null, sent: true };
-  }
-
   return { error: null, smsLink: smsLink(phone_number, body) };
-}
-
-export async function logBrowserCall(input: {
-  orderId: string;
-  customerPhone: string;
-  outcome: "answered" | "no_answer" | "busy" | "failed";
-  notes?: string;
-}): Promise<ActionState> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: "You need to sign in first." };
-  }
-
-  const { error } = await supabase.from("contact_logs").insert({
-    order_id: input.orderId,
-    staff_id: user.id,
-    contact_type: "call",
-    outcome: input.outcome,
-    notes: input.notes ?? `In-browser call to ${input.customerPhone}`,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/");
-  revalidatePath("/orders");
-  revalidatePath(`/orders/${input.orderId}`);
-  revalidatePath("/logs");
-  return { error: null };
 }

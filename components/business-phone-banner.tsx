@@ -10,24 +10,23 @@ export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) 
     return (
       <span
         className="hidden rounded-md border border-white/20 px-2.5 py-1 font-mono text-xs text-white/90 md:inline-block"
-        title="Outbound caller ID — business SIM"
+        title="Business SIM for Unli All-Net calls and texts"
       >
-        From {display}
+        {display}
       </span>
     );
   }
 
   return (
     <aside className="rounded-xl border border-line bg-card px-4 py-3 shadow-sm">
-      <p className="text-sm font-medium">Business line (shared by all staff)</p>
+      <p className="text-sm font-medium">Business phone (Unli All-Net SIM)</p>
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="font-mono text-lg font-semibold tracking-tight">{display}</span>
         <CopyButton value={phone} label="Copy" />
       </div>
       <p className="mt-2 text-sm text-muted">
-        Staff use <strong>Call from this PC</strong> (headset) or <strong>Message customer</strong>.
-        Caller ID is {display} when Twilio has that number verified. Up to 10 staff share this
-        line — every call is logged.
+        Place every call and SMS on this phone. The website is the queue and logbook — not
+        Twilio or any internet calling API. Load your Unli promo on this SIM.
       </p>
     </aside>
   );

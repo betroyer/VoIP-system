@@ -5,9 +5,7 @@ import { CopyButton } from "@/components/copy-button";
 import { OrderForm } from "@/components/order-form";
 import { DISCLOSURE_SCRIPT } from "@/lib/constants";
 import { StaffPage, requireStaff } from "@/lib/auth";
-import { getBusinessPhone } from "@/lib/business-phone";
 import { formatDateTime, formatPhone, labelContactType } from "@/lib/format";
-import { isTwilioConfigured, isTwilioVoiceConfigured } from "@/lib/twilio";
 import type { ContactLog, Customer, OrderWithCustomer } from "@/lib/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -85,7 +83,7 @@ export default async function OrderDetailPage({
       <section className="mt-6 rounded-xl border border-line bg-card p-5 shadow-sm">
         <h2 className="font-semibold">Contact customer</h2>
         <p className="mt-1 text-sm text-muted">
-          Call or message from here, then save the outcome below.
+          Call or message using the business phone, then save the outcome below.
         </p>
         <div className="mt-4">
           <ContactActions
@@ -94,9 +92,6 @@ export default async function OrderDetailPage({
             orderId={record.id}
             parcelStatus={record.parcel_status}
             trackingNumber={record.tracking_number}
-            twilioSms={isTwilioConfigured()}
-            voiceReady={isTwilioVoiceConfigured()}
-            callerIdDisplay={formatPhone(getBusinessPhone())}
           />
         </div>
       </section>
