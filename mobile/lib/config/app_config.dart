@@ -15,7 +15,7 @@ class AppConfig {
   static String get businessPhone => defaultBusinessPhone;
 
   static const disclosureScript =
-      'This call may be recorded for delivery verification purposes.';
+      'This call may be recorded for parcel delivery verification and as proof of our conversation.';
 
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;

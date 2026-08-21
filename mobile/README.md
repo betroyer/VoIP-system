@@ -34,7 +34,7 @@ flutter run
 | **Inbox** | SMS threads; open thread to send SMS / call |
 | **Contacts** | Customer list → message or call |
 | **Orders** | Parcels → open thread |
-| Call recording | Stub — Phase 5 |
+| Call recording | Consent → mic record during call → upload to Supabase `call-recordings` |
 
 ## Install from GitHub (release APK)
 
@@ -55,4 +55,6 @@ SMS and phone on first use. Recording permission reserved for Phase 5.
 
 ## RA 4200
 
-Before recording calls, play the consent notice. See `AppConfig.disclosureScript`.
+Before each recorded call the app shows a consent dialog. Staff must say the disclosure on the line (see `AppConfig.disclosureScript`). Run `supabase/call_recordings.sql` once so metadata can be saved.
+
+**Note:** Android does not allow third-party apps to capture the full cellular voice stream. Use **speakerphone** so more of the customer is heard on the mic recording. Tap **Stop & save** when the call ends if auto-detect misses it.

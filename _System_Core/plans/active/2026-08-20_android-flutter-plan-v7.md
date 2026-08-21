@@ -15,6 +15,7 @@
 - [x] Supabase login shell
 - [x] Dial pad: Call + Message via device SIM
 - [x] Web Contact/Inbox removed (redirect to `/releases`)
+- [x] Call recording + RA 4200 consent + Storage upload
 - [ ] SMS on device SIM hardened on target phones
-- [ ] Calls on device SIM + contact_logs
-- [ ] Recording tested on target phone model
+- [ ] Recording tested on target phone model (speakerphone)
+- [ ] Run `supabase/call_recordings.sql`

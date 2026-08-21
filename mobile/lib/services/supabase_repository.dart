@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/customer.dart';
@@ -108,5 +110,67 @@ class SupabaseRepository {
       'notes': notes,
       'recording_link': recordingPath,
     });
+  }
+
+  /// Upload local m4a to private `call-recordings` bucket. Returns storage path.
+  Future<String> uploadCallRecording({
+    required String localPath,
+    required String phoneNumber,
+  }) async {
+    final staffId = currentUser?.id;
+    if (staffId == null) {
+      throw StateError('Sign in required to upload recordings.');
+    }
+
+    final file = File(localPath);
+    final bytes = await file.readAsBytes();
+    final stamp = DateTime.now().toUtc().toIso8601String().replaceAll(':', '-');
+    final key = phoneKey(phoneNumber);
+    final path = '$staffId/${key}_$stamp.m4a';
+
+    await _client.storage.from('call-recordings').uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(
+            contentType: 'audio/mp4',
+            upsert: false,
+          ),
+        );
+
+    return path;
+  }
+
+  Future<void> insertCallRecording({
+    required String phoneNumber,
+    required String storagePath,
+    String? customerId,
+    String? orderId,
+    int? durationSeconds,
+    String? notes,
+  }) async {
+    final staffId = currentUser?.id;
+    if (staffId == null) {
+      throw StateError('Sign in required to save recording metadata.');
+    }
+
+    await _client.from('call_recordings').insert({
+      'staff_id': staffId,
+      'phone_number': phoneKey(phoneNumber),
+      'customer_id': customerId,
+      'order_id': orderId,
+      'storage_path': storagePath,
+      'duration_seconds': durationSeconds,
+      'notes': notes,
+    });
+
+    if (orderId != null) {
+      await logCall(
+        orderId: orderId,
+        staffId: staffId,
+        outcome: 'answered',
+        notes: notes ?? 'Recorded call for parcel proof.',
+        recordingPath: storagePath,
+      );
+    }
   }
 }

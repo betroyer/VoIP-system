@@ -4,6 +4,12 @@
 
 ## Recent log entries
 
+### 2026-08-21 — Call recording for parcel proof
+
+Outgoing calls show RA 4200 consent, start mic recording, dial via SIM, then upload to Supabase Storage `call-recordings` + `call_recordings` table (run `supabase/call_recordings.sql`). Speakerphone recommended; full duplex cellular audio is not available to third-party apps.
+
+**Key files:** `mobile/lib/screens/active_call_screen.dart`, `mobile/lib/services/recording_service.dart`
+
 ### 2026-08-21 — Settings: changeable business number
 
 Android app Settings (gear on Dial/Inbox/Contacts/Orders) lets staff save another PH business SIM number (SharedPreferences). Dial shows the current line. Reminder: traffic still uses the physical SIM in the phone.

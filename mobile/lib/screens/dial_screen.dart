@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../services/call_service.dart';
 import '../services/settings_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import 'active_call_screen.dart';
 import 'settings_action.dart';
 import 'thread_screen.dart';
 
@@ -18,7 +18,6 @@ class DialScreen extends StatefulWidget {
 }
 
 class _DialScreenState extends State<DialScreen> {
-  final _calls = CallService();
   final _controller = TextEditingController();
   var _busy = false;
 
@@ -63,23 +62,11 @@ class _DialScreenState extends State<DialScreen> {
     if (!_valid) return;
     setState(() => _busy = true);
     try {
-      final ok = await _calls.placeCall(_phone);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ok
-                ? 'Calling ${formatPhone(_phone)} via this phone’s SIM…'
-                : 'Call failed.',
-          ),
-        ),
+      await startRecordedCall(
+        context: context,
+        repository: widget.repository,
+        phoneNumber: _phone,
       );
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.toString())),
-        );
-      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../models/customer.dart';
 import '../models/message.dart';
-import '../services/call_service.dart';
 import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import 'active_call_screen.dart';
 
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({
@@ -13,11 +13,13 @@ class ThreadScreen extends StatefulWidget {
     required this.repository,
     required this.phoneNumber,
     this.customer,
+    this.orderId,
   });
 
   final SupabaseRepository repository;
   final String phoneNumber;
   final Customer? customer;
+  final String? orderId;
 
   @override
   State<ThreadScreen> createState() => _ThreadScreenState();
@@ -26,7 +28,6 @@ class ThreadScreen extends StatefulWidget {
 class _ThreadScreenState extends State<ThreadScreen> {
   final _composer = TextEditingController();
   final _sms = SmsService();
-  final _calls = CallService();
   var _loading = true;
   var _sending = false;
   List<Message> _messages = [];
@@ -86,23 +87,14 @@ class _ThreadScreenState extends State<ThreadScreen> {
   }
 
   Future<void> _call() async {
-    try {
-      final ok = await _calls.placeCall(widget.phoneNumber);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ok ? 'Calling ${formatPhone(widget.phoneNumber)}…' : 'Call failed.',
-          ),
-        ),
-      );
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.toString())),
-        );
-      }
-    }
+    await startRecordedCall(
+      context: context,
+      repository: widget.repository,
+      phoneNumber: widget.phoneNumber,
+      customerId: widget.customer?.id,
+      customerName: widget.customer?.name,
+      orderId: widget.orderId,
+    );
   }
 
   @override

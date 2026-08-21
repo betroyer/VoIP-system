@@ -13,8 +13,8 @@
 ## Active feature / sprint
 
 - **Current focus:** Android Flutter app on business SIM (Plan v7)
-- **Latest shipped:** Dial tab + Inbox/Contacts/Orders; web Contact/Inbox removed (redirect to `/releases`)
-- **Next:** Test on target Android phone; inbound SMS reliability; call logging + recording
+- **Latest shipped:** Dial + Settings + call recording (consent → mic → upload)
+- **Next:** Run `call_recordings.sql` on Supabase; test recording on target phone model(s)
 
 ## Current todo
 
@@ -23,12 +23,10 @@
 - [x] Supabase login + data fetch
 - [x] Android SMS send + direct call (permissions)
 - [x] Remove web Contact/Inbox call center (redirect to install)
+- [x] Call recording + RA 4200 consent dialog + Storage upload
+- [ ] Run `supabase/call_recordings.sql` on Supabase
 - [ ] Run `messages.sql` if not applied
-- [ ] Test on exact staff phone model(s)
-- [ ] Inbound SMS → Supabase sync (harden)
-- [ ] Call outcomes → `contact_logs`
-- [ ] Recording + consent prompt (device-dependent)
-
+- [ ] Test recording on exact staff phone model(s) (speakerphone)
 ## Web (secondary)
 
 - `/releases` — APK install page

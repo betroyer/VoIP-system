@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/customer.dart';
 import '../models/order.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
@@ -82,7 +83,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         builder: (_) => ThreadScreen(
                                           repository: widget.repository,
                                           phoneNumber: customer.phoneNumber,
-                                          customer: null,
+                                          customer: Customer(
+                                            id: customer.id,
+                                            name: customer.name,
+                                            phoneNumber: customer.phoneNumber,
+                                            network: 'other',
+                                            createdAt: DateTime.now(),
+                                          ),
+                                          orderId: order.id,
                                         ),
                                       ),
                                     );

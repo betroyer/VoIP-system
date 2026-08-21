@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/customer.dart';
-import '../services/call_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import 'active_call_screen.dart';
 import 'settings_action.dart';
 import 'thread_screen.dart';
 
@@ -17,7 +17,6 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  final _calls = CallService();
   var _loading = true;
   List<Customer> _customers = [];
   String? _error;
@@ -44,15 +43,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   Future<void> _call(Customer customer) async {
-    try {
-      await _calls.placeCall(customer.phoneNumber);
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.toString())),
-        );
-      }
-    }
+    await startRecordedCall(
+      context: context,
+      repository: widget.repository,
+      phoneNumber: customer.phoneNumber,
+      customerId: customer.id,
+      customerName: customer.name,
+    );
   }
 
   @override
