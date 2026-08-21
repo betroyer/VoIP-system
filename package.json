@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "bridge": "npm run start --prefix gateway-bridge",
+    "bridge:dev": "npm run dev --prefix gateway-bridge",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

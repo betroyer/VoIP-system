@@ -3,18 +3,17 @@
 ## Project Overview
 
 - **Project Name:** Customer Contact System (repo folder: VoIP system)
-- **Primary Goal:** Private web dashboard so staff can **call and text from a computer** (Contact + Inbox) like a small call center, and still log parcel follow-up. Physical SIM **09171392170** + Unli remains a fallback (`tel:` / `sms:`).
-- **Not:** Auto-dialer / IVR. International (non-PH) numbers.
+- **Primary Goal:** **Android Flutter app** so staff text/call parcel customers from the business phone SIM, sync to Supabase, with best-effort call recording.
+- **Legacy:** Next.js web dashboard + gateway-bridge (Plans v3–v6) — not the primary product.
 
 ## Tech stack
 
 | Layer | Choice |
 |-------|--------|
-| Web app | Next.js 16 (App Router) + React 19 + Tailwind 4 |
+| Mobile app | **Flutter / Dart** (Android only) |
 | Auth + DB + storage | Supabase (Postgres, Auth, Storage, RLS) |
-| Hosting | Vercel (`betroyers-projects` / `voip-system`) |
-| GitHub | `betroyer/VoIP-system` (HTTPS remote) |
-| Contact | SIM gateway / PBX bridge (PC) or business phone + Unli |
+| Contact | Device SIM — Android SMS + telephony APIs |
+| Legacy web | Next.js on Vercel (archived path) |
 
 ## Accounts (keep separate from Brent/PYX)
 
@@ -28,10 +27,12 @@
 ## Folder structure
 
 - `_System_Core/` → Obsidian memory bank (**no application code**)
-- `app/` → Next.js routes (`/`, `/contact`, `/inbox`, `/login`, `/customers`, `/orders`, `/logs`)
+- `mobile/` → **Plan v7** Flutter Android staff app
+- `app/` → Legacy Next.js dashboard (not primary)
+- `gateway-bridge/` → Legacy office LAN bridge (not primary)
 - `components/` → Dashboard UI
 - `lib/` → Supabase clients, server actions, types
-- `proxy.ts` → Next.js 16 auth gate (Supabase session)
+- `gateway-bridge/` → Local SIM gateway / PBX bridge service (office LAN)
 - `supabase/schema.sql` → Tables, RLS, storage bucket (already applied)
 
 ## Environment
@@ -57,7 +58,7 @@ Never commit `.env.local`, service role, or `sbp_` personal access tokens.
 
 ## Critical rules
 
-- Follow [[specs/2026-08-20_call-center-contact-inbox]] for PC Contact/Inbox. Plan v3 phone-only is still valid as a fallback.
+- Follow [[specs/2026-08-20_android-flutter-plan-v7]] for the primary product.
 - Read [[001_System_State]] before new features.
 - Log shipped work in [[002_Memory_Bank]].
 - Document traps in [[003_Fragile_Edges]].

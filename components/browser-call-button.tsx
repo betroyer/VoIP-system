@@ -1,5 +1,6 @@
 "use client";
 
+import { telLink } from "@/lib/phone-links";
 import { useState } from "react";
 
 type Status = "idle" | "requesting" | "requested" | "error";
@@ -22,7 +23,7 @@ export function BrowserCallButton({
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  async function startCall() {
+  async function startGatewayCall() {
     setError(null);
     setStatus("requesting");
     try {
@@ -49,19 +50,20 @@ export function BrowserCallButton({
     }
   }
 
+  // No office gateway — open the device dialer (phone / linked handset).
   if (!voiceReady) {
     return (
       <div className="grid gap-1">
-        <button
-          type="button"
-          disabled
-          className="inline-flex cursor-not-allowed items-center rounded-md bg-stone-400 px-4 py-2 text-sm font-medium text-white"
+        <a
+          href={telLink(customerPhone)}
+          className="inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover"
         >
-          {label} (setup needed)
-        </button>
+          {label}
+        </a>
         <p className="max-w-md text-xs text-muted">
-          Calling from this PC needs the office gateway bridge and PBX/gateway box
-          for <span className="font-mono">{callerIdDisplay}</span>.
+          Opens your phone dialer. Place the call from business SIM{" "}
+          <span className="font-mono">{callerIdDisplay}</span> (or the Android staff
+          app).
         </p>
       </div>
     );
@@ -78,7 +80,7 @@ export function BrowserCallButton({
     <div className="grid gap-1">
       <button
         type="button"
-        onClick={() => void startCall()}
+        onClick={() => void startGatewayCall()}
         className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white ${
           status === "requested"
             ? "bg-emerald-700 hover:bg-emerald-800"

@@ -1,6 +1,7 @@
 import { CopyButton } from "@/components/copy-button";
 import { getBusinessPhone } from "@/lib/business-phone";
 import { formatPhone } from "@/lib/format";
+import Link from "next/link";
 
 export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) {
   const phone = getBusinessPhone();
@@ -10,7 +11,7 @@ export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) 
     return (
       <span
         className="hidden rounded-md border border-white/20 px-2.5 py-1 font-mono text-xs text-white/90 md:inline-block"
-        title="Business SIM for Unli All-Net calls and texts"
+        title="Business SIM — use Android staff app"
       >
         {display}
       </span>
@@ -23,10 +24,16 @@ export function BusinessPhoneBanner({ compact = false }: { compact?: boolean }) 
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <span className="font-mono text-lg font-semibold tracking-tight">{display}</span>
         <CopyButton value={phone} label="Copy" />
+        <Link
+          href="/releases"
+          className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-accent-hover"
+        >
+          Install Android app
+        </Link>
       </div>
       <p className="mt-2 text-sm text-muted">
-        Unli All-Net still applies when you call from this physical SIM. Calls from the
-        computer (Contact / Inbox) must pass through your office gateway/PBX setup.
+        Put this SIM in the staff Android phone. Call and SMS from the app — not from
+        this website.
       </p>
     </aside>
   );

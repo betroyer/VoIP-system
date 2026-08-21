@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import 'contacts_screen.dart';
+import 'dial_screen.dart';
 import 'inbox_screen.dart';
 import 'orders_screen.dart';
 
@@ -44,6 +45,7 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final pages = [
+      DialScreen(repository: widget.repository),
       InboxScreen(repository: widget.repository),
       ContactsScreen(repository: widget.repository),
       OrdersScreen(repository: widget.repository),
@@ -55,6 +57,11 @@ class _AppShellState extends State<AppShell> {
         selectedIndex: _index,
         onDestinationSelected: (value) => setState(() => _index = value),
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dialpad_outlined),
+            selectedIcon: Icon(Icons.dialpad),
+            label: 'Dial',
+          ),
           NavigationDestination(
             icon: Icon(Icons.inbox_outlined),
             selectedIcon: Icon(Icons.inbox),

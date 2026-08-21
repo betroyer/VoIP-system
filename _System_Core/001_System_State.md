@@ -6,30 +6,41 @@
 
 | Field | Link |
 |-------|------|
-| **Active Spec** | [[specs/2026-08-20_call-center-contact-inbox]] |
-| **Active Plan** | [[plans/active/2026-08-20_call-center-contact-inbox]] |
-| **Status** | `build` — gateway/PBX-ready Contact + Inbox shipped; local bridge + `messages.sql` still needed for live PC calls/SMS |
+| **Active Spec** | [[specs/2026-08-20_android-flutter-plan-v7]] |
+| **Active Plan** | [[plans/active/2026-08-20_android-flutter-plan-v7]] |
+| **Status** | `build` — Android app is the only call/SMS surface |
 
 ## Active feature / sprint
 
-- **Current focus:** Call-center from the PC through a SIM gateway / PBX bridge
-- **Latest shipped:** Dial pad, Inbox threads, gateway-ready SMS/call routes (2026-08-20)
-- **Next:** Run `supabase/messages.sql`; add `GATEWAY_*` + service role env on Vercel; connect the bridge to the chosen hardware
+- **Current focus:** Android Flutter app on business SIM (Plan v7)
+- **Latest shipped:** Dial tab + Inbox/Contacts/Orders; web Contact/Inbox removed (redirect to `/releases`)
+- **Next:** Test on target Android phone; inbound SMS reliability; call logging + recording
 
 ## Current todo
 
-- [x] Contact page (dial pad)
-- [x] Inbox threads + composer
-- [x] Gateway bridge routes + inbound webhook endpoints
-- [ ] Run `messages.sql` on Supabase
-- [ ] Buy/configure gateway hardware and PBX/bridge
-- [ ] Vercel env: `GATEWAY_*` + `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] Disable public sign-up; staff Auth users
-- [ ] Connect GitHub repo to Vercel GitHub app
+- [x] Flutter project in `mobile/`
+- [x] Bottom nav: Dial / Inbox / Contacts / Orders
+- [x] Supabase login + data fetch
+- [x] Android SMS send + direct call (permissions)
+- [x] Remove web Contact/Inbox call center (redirect to install)
+- [ ] Run `messages.sql` if not applied
+- [ ] Test on exact staff phone model(s)
+- [ ] Inbound SMS → Supabase sync (harden)
+- [ ] Call outcomes → `contact_logs`
+- [ ] Recording + consent prompt (device-dependent)
+
+## Web (secondary)
+
+- `/releases` — APK install page
+- Queue / Orders / Customers / Logs — optional logbook only (no PC dial/SMS)
+
+## Legacy (do not extend)
+
+- `gateway-bridge/` (Plan v6)
+- Web Contact/Inbox UI (redirects only)
 
 ## Known blockers
 
-- **PC audio/SMS:** Will not leave the computer until the gateway bridge is running and reachable.
-- **Inbox table:** Sending fails until `public.messages` exists.
-- **Inbound SMS:** Needs the bridge / PBX to POST to the gateway webhook routes.
-- **Vercel Git:** CLI deploy works; `git push` auto-deploy needs the GitHub app.
+- **iOS:** Out of scope — Apple blocks SIM SMS/call APIs for third-party apps.
+- **Recording:** Unreliable on many Android 10+ devices — must test hardware first.
+- **Staff login:** Need Supabase Auth users with sign-up disabled.

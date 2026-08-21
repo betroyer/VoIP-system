@@ -4,6 +4,36 @@
 
 ## Recent log entries
 
+### 2026-08-21 — Settings: changeable business number
+
+Android app Settings (gear on Dial/Inbox/Contacts/Orders) lets staff save another PH business SIM number (SharedPreferences). Dial shows the current line. Reminder: traffic still uses the physical SIM in the phone.
+
+**Key files:** `mobile/lib/screens/settings_screen.dart`, `mobile/lib/services/settings_service.dart`
+
+### 2026-08-21 — Mobile-only call/SMS; web Contact/Inbox removed
+
+Staff confirmed PC web dial/SMS is a dead end. Product path is **Android app only** (SIM in phone). Added **Dial** tab (call + message). Web `/contact` and `/inbox` redirect to `/releases`. Queue keeps copy-number + “install app” only.
+
+**Key files:** `mobile/lib/screens/dial_screen.dart`, `app/contact/page.tsx`, `app/inbox/`, `README.md`
+
+### 2026-08-20 — Contact Call no longer blocked without gateway
+
+Without `GATEWAY_BRIDGE_URL`, **Call** opens the device dialer (`tel:`) instead of a disabled “setup needed” state. Banner points staff to the business SIM / Android `/releases` app. Optional office gateway still works when configured.
+
+**Key files:** `components/browser-call-button.tsx`, `components/call-center-setup-banner.tsx`
+
+### 2026-08-20 — Plan v7: Flutter Android app scaffold
+
+Primary product is now an **Android Flutter app** (`mobile/`) using the device SIM — no PC dashboard, no gateway hardware. Inbox/Contacts/Orders + Supabase auth; SMS/call via Android APIs.
+
+**Key files:** `mobile/lib/`, `_System_Core/specs/2026-08-20_android-flutter-plan-v7.md`
+
+### 2026-08-20 — Gateway bridge scaffold + mock driver running locally
+
+Added `gateway-bridge/` with SPEC, mock SMS/call driver, and webhook forwarding. Bridge runs on port 3001; dashboard `.env.local` points to `http://127.0.0.1:3001`.
+
+**Key files:** `gateway-bridge/SPEC.md`, `gateway-bridge/src/server.ts`
+
 ### 2026-08-20 — Switched PC calling/SMS from Twilio to gateway-ready bridge
 
 Adopted Plan v6: one business SIM in a gateway box, with the dashboard calling a local bridge/PBX instead of Twilio. Added gateway webhook routes for inbound SMS and call events, and updated Contact/Inbox UI copy to match the hardware path.

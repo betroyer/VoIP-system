@@ -92,7 +92,9 @@ export function DialPad({
 
       {valid ? (
         <p className="text-center text-xs text-muted">
-          Will dial {formatPhone(phone)} through the office PBX/gateway setup.
+          {voiceReady
+            ? `Will request a call to ${formatPhone(phone)} via the office gateway.`
+            : `Will open the dialer for ${formatPhone(phone)} — place the call from ${callerIdDisplay}.`}
         </p>
       ) : null}
     </div>

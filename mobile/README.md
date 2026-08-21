@@ -1,12 +1,14 @@
 # Customer Contact — Android (Flutter)
 
-Plan v7 staff app: **Inbox**, **Contacts**, and **Orders** on an Android phone with the business SIM.
+**Primary product.** Staff app: **Dial**, **Inbox**, **Contacts**, and **Orders** on an Android phone with the business SIM.
+
+Calls and SMS use the SIM in the device — not the website.
 
 ## Requirements
 
 - Flutter 3.x / Dart 3.x
 - Android phone with business SIM (09171392170)
-- Supabase staff login (same project as the web dashboard)
+- Supabase staff login (same project as the web logbook)
 
 ## Setup
 
@@ -24,44 +26,33 @@ flutter devices
 flutter run
 ```
 
-Windows desktop build is **not** the target — SMS and calls only work on Android hardware.
+## Screens
+
+| Screen | What it does |
+|--------|----------------|
+| **Dial** | Keypad → **Call** (SIM) or **Message** (SMS thread) |
+| **Inbox** | SMS threads; open thread to send SMS / call |
+| **Contacts** | Customer list → message or call |
+| **Orders** | Parcels → open thread |
+| Call recording | Stub — Phase 5 |
 
 ## Install from GitHub (release APK)
 
-1. Open the install page on your phone: **`/releases`** on the deployed site, or [GitHub Releases](https://github.com/betroyer/VoIP-system/releases).
-2. Download the latest `customer-contact-*.apk`.
-3. Allow installs from your browser if Android prompts you.
-4. Open the file and install. Sign in with staff credentials.
+1. Open **/releases** on the deployed site, or [GitHub Releases](https://github.com/betroyer/VoIP-system/releases).
+2. Download `customer-contact-*.apk`, allow unknown installs, install, sign in.
 
-To build locally:
+Local build:
 
 ```bash
 cd mobile
-bash scripts/patch_telephony.sh   # fixes discontinued telephony plugin for AGP 8+
+bash scripts/patch_telephony.sh
 flutter build apk --release
-# APK: build/app/outputs/flutter-apk/app-release.apk
 ```
-
-Tag `mobile-v1.0.0` (etc.) on GitHub to trigger `.github/workflows/android-release.yml` and attach the APK to a release. Set repo secrets `SUPABASE_URL` and `SUPABASE_ANON_KEY` for CI builds.
-
-## Features (current)
-
-| Screen | Status |
-|--------|--------|
-| Login | Supabase Auth |
-| Inbox | Thread list + send SMS via SIM + call button |
-| Contacts | List + message/call |
-| Orders | Parcel list → open thread |
-| Call recording | Stub — test on target phone model (Phase 5) |
 
 ## Permissions
 
-The app requests SMS and phone permissions on first use. Recording permission is declared for Phase 5.
+SMS and phone on first use. Recording permission reserved for Phase 5.
 
 ## RA 4200
 
-Before recording calls, play the consent notice at call start. See `AppConfig.disclosureScript`.
-
-## Legacy
-
-The Next.js dashboard and `gateway-bridge/` are **not** the primary product under Plan v7.
+Before recording calls, play the consent notice. See `AppConfig.disclosureScript`.

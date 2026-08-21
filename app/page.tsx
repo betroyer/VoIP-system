@@ -45,7 +45,7 @@ export default async function QueuePage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Today&apos;s queue</h1>
           <p className="mt-1 text-sm text-muted">
-            Call or text from Contact / Inbox on this PC, or from the business phone (
+            Call or text from the Android staff app on the business phone (
             {formatPhone(getBusinessPhone())}), then log the outcome here.
           </p>
         </div>

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/order.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import 'settings_action.dart';
 import 'thread_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -46,6 +47,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         title: const Text('Orders'),
         actions: [
+          settingsAction(context, widget.repository),
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
         ],
       ),

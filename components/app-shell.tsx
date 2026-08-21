@@ -5,11 +5,10 @@ import type { ReactNode } from "react";
 
 const links = [
   { href: "/", label: "Queue" },
-  { href: "/contact", label: "Contact" },
-  { href: "/inbox", label: "Inbox" },
   { href: "/orders", label: "Orders" },
   { href: "/customers", label: "Customers" },
   { href: "/logs", label: "Logs" },
+  { href: "/releases", label: "Install app" },
 ];
 
 export function AppShell({

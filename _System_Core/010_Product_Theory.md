@@ -1,43 +1,42 @@
 # Product Theory — Customer Contact System
 
-> Source: call-center spec + Plan v3 phone fallback. Technical how-to: [[000_System_Architecture]].
+> **Plan v7 (primary):** Android Flutter app on business SIM. Web is install + optional logbook only — no PC dial/SMS.
 
 ## Vision
 
-A cheap, private web dashboard so staff can contact local Philippine customers about parcels **from a computer** (Contact + Inbox) or from a **business phone** (SIM **09171392170** + Unli All-Net).
+Staff contact Philippine parcel customers by **text and call from an Android phone** with the business SIM (Call & Text load). Activity syncs to Supabase. Best-effort call recording when the device supports it.
 
 ## Who uses it
 
 | User | Jobs |
 |------|------|
-| **Staff** | Dial from Contact, text from Inbox, work the parcel Queue |
-| **Customer** | Receives call/SMS on TNT / Smart / Globe — they never log in |
+| **Staff (Android)** | Dial, Inbox SMS, call customers, update parcel orders |
+| **Customer** | Receives SMS/calls on their mobile — never logs in |
+
+## Platform
+
+- **Android only** — iOS cannot access SIM SMS/call/recording APIs for third-party apps.
+- **Flutter / Dart** in `mobile/`
+- **Web** — `/releases` APK install + optional Queue/Orders/Logs (no telephony)
 
 ## Domain principles
 
-1. **PH only** — `+63` / `09` destinations.
-2. **PC agents need a gateway/PBX bridge** — the office SIM handles SMS/voice, not the browser.
-3. **Phone agents stay cheap** — Unli on the physical SIM still works via `tel:` / `sms:`.
-4. **Private by login** — Supabase Auth; no public sign-up.
-5. **Consent if recording** — RA 4200.
+1. **Normal handset use** — SIM stays in a real phone; lower telco FUP risk than gateway hardware.
+2. **PH numbers only**
+3. **Supabase sync** — messages, contact logs, recordings (Storage)
+4. **Recording is bonus** — `contact_logs` outcome + notes are the reliable record
+5. **RA 4200** — consent notice at call start
 
-## How call/SMS works
+## Non-goals (Plan v7)
 
-| Action | Behavior |
-|--------|----------|
-| **Contact → Call** | The dashboard asks the office gateway / PBX to place the call |
-| **Inbox → Send** | The dashboard asks the gateway to send SMS; inbound webhook fills the thread |
-| **Call on phone** | Opens the device phone app (`tel:`) on SIM 09171392170 |
-
-## Non-goals
-
-- Auto-dialer / ACD / IVR
-- Non-PH numbers
-- Customer self-serve portal
-- Public registration
+- iOS app
+- PC call center / web Contact / web Inbox telephony
+- GOIP / PBX / gateway box
+- Auto-dialer / IVR
+- Telnyx / Twilio / other metered CPaaS
 
 ## Feature specs
 
-- [[specs/TEMPLATE_Feature_Spec]]
-- [[specs/2026-08-20_customer-contact-system]]
-- [[specs/2026-08-20_call-center-contact-inbox]]
+- [[specs/2026-08-20_android-flutter-plan-v7]]
+- [[specs/2026-08-20_customer-contact-system]] (Plan v3 — historical)
+- [[specs/2026-08-20_call-center-contact-inbox]] (PC path — retired)

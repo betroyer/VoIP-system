@@ -1,18 +1,11 @@
-import { BrowserCallButton } from "@/components/browser-call-button";
-import { CustomerMessaging } from "@/components/customer-messaging";
-import { getBusinessPhone } from "@/lib/business-phone";
+import { CopyButton } from "@/components/copy-button";
 import { formatPhone } from "@/lib/format";
-import { getCallerIdDisplay, isGatewayConfigured } from "@/lib/gateway";
-import { inboxPath, telLink } from "@/lib/phone-links";
 import type { ParcelStatus } from "@/lib/types";
 import Link from "next/link";
 
+/** Queue helpers only — call/SMS happen in the Android app on the business SIM. */
 export function ContactActions({
-  customerName,
   customerPhone,
-  orderId,
-  parcelStatus,
-  trackingNumber,
 }: {
   customerName: string;
   customerPhone: string;
@@ -22,42 +15,22 @@ export function ContactActions({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-start gap-2">
-        <BrowserCallButton
-          customerPhone={customerPhone}
-          customerName={customerName}
-          orderId={orderId}
-          voiceReady={isGatewayConfigured()}
-          callerIdDisplay={getCallerIdDisplay()}
-          label="Call from this PC"
-        />
-        <a
-          href={telLink(customerPhone)}
-          className="inline-flex items-center rounded-md border border-line bg-white px-4 py-2 text-sm font-medium hover:bg-background"
-        >
-          Call on phone
-        </a>
-        <Link
-          href={inboxPath(customerPhone)}
-          className="inline-flex items-center rounded-md border border-line bg-white px-4 py-2 text-sm font-medium hover:bg-background"
-        >
-          Open inbox
-        </Link>
+      <div className="flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center rounded-md border border-line bg-white px-3 py-2 font-mono text-sm">
           {formatPhone(customerPhone)}
         </span>
+        <CopyButton value={customerPhone} label="Copy number" />
+        <Link
+          href="/releases"
+          className="inline-flex items-center rounded-md bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover"
+        >
+          Call / text in Android app
+        </Link>
       </div>
       <p className="text-xs text-muted">
-        PC call/SMS goes through your SIM gateway box. Physical phone fallback still
-        uses {formatPhone(getBusinessPhone())}.
+        Use the staff Android app (SIM in the phone) to dial or message{" "}
+        {formatPhone(customerPhone)}. Log the outcome on this page afterward.
       </p>
-      <CustomerMessaging
-        customerName={customerName}
-        customerPhone={customerPhone}
-        orderId={orderId}
-        parcelStatus={parcelStatus}
-        trackingNumber={trackingNumber}
-      />
     </div>
   );
 }

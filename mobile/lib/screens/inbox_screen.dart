@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/supabase_repository.dart';
 import '../utils/inbox.dart';
 import '../utils/phone.dart';
+import 'settings_action.dart';
 import 'thread_screen.dart';
 
 class InboxScreen extends StatefulWidget {
@@ -47,6 +48,7 @@ class _InboxScreenState extends State<InboxScreen> {
       appBar: AppBar(
         title: const Text('Inbox'),
         actions: [
+          settingsAction(context, widget.repository),
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
         ],
       ),

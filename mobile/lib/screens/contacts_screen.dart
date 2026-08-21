@@ -4,6 +4,7 @@ import '../models/customer.dart';
 import '../services/call_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import 'settings_action.dart';
 import 'thread_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -60,6 +61,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       appBar: AppBar(
         title: const Text('Contacts'),
         actions: [
+          settingsAction(context, widget.repository),
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
         ],
       ),

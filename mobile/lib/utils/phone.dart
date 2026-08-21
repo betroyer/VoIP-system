@@ -17,6 +17,11 @@ String formatPhone(String phone) {
   return phone;
 }
 
+bool isPhilippineMobile(String phone) {
+  final key = phoneKey(phone);
+  return RegExp(r'^09\d{9}$').hasMatch(key);
+}
+
 String labelStatus(String status) {
   return status
       .split('_')
