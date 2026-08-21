@@ -30,11 +30,12 @@ flutter run
 
 | Screen | What it does |
 |--------|----------------|
-| **Dial** | Keypad → **Call** (SIM) or **Message** (SMS thread) |
+| **Dial** | Keypad → **Call** (SIM + record) or **Message** |
 | **Inbox** | SMS threads; open thread to send SMS / call |
+| **History** | Play call recordings saved on this phone |
 | **Contacts** | Customer list → message or call |
 | **Orders** | Parcels → open thread |
-| Call recording | Consent → mic record during call → upload to Supabase `call-recordings` |
+| Call recording | Consent → foreground mic → History (+ optional cloud) |
 
 ## Install from GitHub (release APK)
 

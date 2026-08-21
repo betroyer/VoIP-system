@@ -4,6 +4,12 @@
 
 ## Recent log entries
 
+### 2026-08-21 — Call History + fix recording during dialer
+
+Recording failed when the phone dialer took focus (Android kills background mic). Added microphone foreground service, always save to on-device **History** first, then optional cloud upload. New History tab with play/delete.
+
+**Key files:** `mobile/lib/screens/history_screen.dart`, `mobile/lib/services/call_recording_foreground.dart`, `mobile/lib/services/recording_history_service.dart`
+
 ### 2026-08-21 — Call recording for parcel proof
 
 Outgoing calls show RA 4200 consent, start mic recording, dial via SIM, then upload to Supabase Storage `call-recordings` + `call_recordings` table (run `supabase/call_recordings.sql`). Speakerphone recommended; full duplex cellular audio is not available to third-party apps.

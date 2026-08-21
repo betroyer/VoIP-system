@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config/app_config.dart';
 import 'screens/app_shell.dart';
 import 'screens/login_screen.dart';
+import 'services/call_recording_foreground.dart';
+import 'services/recording_history_service.dart';
 import 'services/settings_service.dart';
 import 'services/supabase_repository.dart';
 import 'theme/app_theme.dart';
@@ -13,6 +16,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await SettingsService.instance.load();
+  await RecordingHistoryService.instance.load();
+  CallRecordingForeground.init();
 
   if (!AppConfig.isConfigured) {
     throw StateError('Set SUPABASE_URL and SUPABASE_ANON_KEY in mobile/.env');
@@ -33,18 +38,20 @@ class CustomerContactApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final repository = SupabaseRepository();
 
-    return MaterialApp(
-      title: 'Customer Contact',
-      theme: buildAppTheme(),
-      home: StreamBuilder<AuthState>(
-        stream: repository.authChanges,
-        builder: (context, snapshot) {
-          final session = snapshot.data?.session;
-          if (session == null) {
-            return LoginScreen(repository: repository);
-          }
-          return AppShell(repository: repository);
-        },
+    return WithForegroundTask(
+      child: MaterialApp(
+        title: 'Customer Contact',
+        theme: buildAppTheme(),
+        home: StreamBuilder<AuthState>(
+          stream: repository.authChanges,
+          builder: (context, snapshot) {
+            final session = snapshot.data?.session;
+            if (session == null) {
+              return LoginScreen(repository: repository);
+            }
+            return AppShell(repository: repository);
+          },
+        ),
       ),
     );
   }

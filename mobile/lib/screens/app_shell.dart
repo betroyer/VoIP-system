@@ -4,6 +4,7 @@ import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import 'contacts_screen.dart';
 import 'dial_screen.dart';
+import 'history_screen.dart';
 import 'inbox_screen.dart';
 import 'orders_screen.dart';
 
@@ -47,6 +48,7 @@ class _AppShellState extends State<AppShell> {
     final pages = [
       DialScreen(repository: widget.repository),
       InboxScreen(repository: widget.repository),
+      HistoryScreen(repository: widget.repository),
       ContactsScreen(repository: widget.repository),
       OrdersScreen(repository: widget.repository),
     ];
@@ -66,6 +68,11 @@ class _AppShellState extends State<AppShell> {
             icon: Icon(Icons.inbox_outlined),
             selectedIcon: Icon(Icons.inbox),
             label: 'Inbox',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.history_outlined),
+            selectedIcon: Icon(Icons.history),
+            label: 'History',
           ),
           NavigationDestination(
             icon: Icon(Icons.contacts_outlined),
