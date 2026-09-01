@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:phone_state/phone_state.dart';
 
 import '../config/app_config.dart';
+import '../services/audio_cleanup_service.dart';
 import '../services/call_recording_foreground.dart';
 import '../services/call_service.dart';
 import '../services/recording_history_service.dart';
@@ -198,14 +200,31 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
         return;
       }
 
+      // Prepare a speech-focused copy for History. If the filter fails, keep
+      // the original recording so the call is not lost.
+      final cleanedPath = await AudioCleanupService().cleanForReview(
+        sourcePath: result.filePath,
+      );
+      final reviewPath = cleanedPath ?? result.filePath;
+
       // Always store on-device History first (works even if cloud fails).
       final entry = await RecordingHistoryService.instance.saveRecording(
-        sourcePath: result.filePath,
+        sourcePath: reviewPath,
         phoneNumber: widget.phoneNumber,
         customerName: widget.customerName,
         durationSeconds: result.durationSeconds,
-        notes: 'Parcel call recording (RA 4200 disclosure given).',
+        notes: cleanedPath != null
+            ? 'Parcel call recording; background-noise reduction applied.'
+            : 'Parcel call recording (RA 4200 disclosure given).',
       );
+
+      // The clean copy was moved into History. Remove the temporary original.
+      if (cleanedPath != null && cleanedPath != result.filePath) {
+        try {
+          final original = File(result.filePath);
+          if (await original.exists()) await original.delete();
+        } catch (_) {}
+      }
 
       // Best-effort cloud sync.
       try {

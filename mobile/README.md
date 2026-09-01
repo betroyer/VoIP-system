@@ -32,10 +32,10 @@ flutter run
 |--------|----------------|
 | **Dial** | Keypad → **Call** (SIM + record) or **Message** |
 | **Inbox** | SMS threads; open thread to send SMS / call |
-| **History** | Play call recordings saved on this phone |
+| **History** | Tap a recording → modal player with playhead, play, and pause |
 | **Contacts** | Customer list → message or call |
 | **Orders** | Parcels → open thread |
-| Call recording | Consent → foreground mic → History (+ optional cloud) |
+| Call recording | Consent → foreground mic → noise reduction → History (+ optional cloud) |
 
 ## Install from GitHub (release APK)
 
@@ -58,4 +58,4 @@ SMS and phone on first use. Recording permission reserved for Phase 5.
 
 Before each recorded call the app shows a consent dialog. Staff must say the disclosure on the line (see `AppConfig.disclosureScript`). Run `supabase/call_recordings.sql` once so metadata can be saved.
 
-**Note:** Android does not allow third-party apps to capture the full cellular voice stream. Use **speakerphone** so more of the customer is heard on the mic recording. Tap **Stop & save** when the call ends if auto-detect misses it.
+**Note:** After each call, the app applies a speech-focused cleanup filter (`highpass`, `lowpass`, and FFmpeg `afftdn`) before saving the version played in History and uploading it. This reduces steady background noise; it cannot remove noise that is louder than the speech or restore customer audio that Android did not capture. Android does not allow third-party apps to capture the full cellular voice stream, so use **speakerphone**. Tap **Stop & save** when auto-detect misses the call end.

@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +7,7 @@ import '../models/call_recording_entry.dart';
 import '../services/recording_history_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
+import '../widgets/recording_playback_sheet.dart';
 import 'settings_action.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -21,46 +20,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  final _player = AudioPlayer();
-  StreamSubscription<void>? _completeSub;
-  String? _playingId;
-
-  @override
-  void initState() {
-    super.initState();
-    _completeSub = _player.onPlayerComplete.listen((_) {
-      if (mounted) setState(() => _playingId = null);
-    });
-  }
-
-  @override
-  void dispose() {
-    _completeSub?.cancel();
-    _player.dispose();
-    super.dispose();
-  }
-
-  Future<void> _togglePlay(CallRecordingEntry entry) async {
-    final file = File(entry.localPath);
-    if (!await file.exists()) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Recording file is missing on this phone.')),
-      );
-      return;
-    }
-
-    if (_playingId == entry.id) {
-      await _player.stop();
-      setState(() => _playingId = null);
-      return;
-    }
-
-    await _player.stop();
-    await _player.play(DeviceFileSource(entry.localPath));
-    setState(() => _playingId = entry.id);
-  }
-
   Future<void> _retryUpload(CallRecordingEntry entry) async {
     try {
       final path = await widget.repository.uploadCallRecording(
@@ -107,10 +66,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
     );
     if (ok == true) {
-      if (_playingId == entry.id) {
-        await _player.stop();
-        setState(() => _playingId = null);
-      }
       await RecordingHistoryService.instance.deleteEntry(entry.id);
     }
   }
@@ -147,13 +102,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final entry = entries[index];
-              final playing = _playingId == entry.id;
               return Card(
                 child: ListTile(
-                  leading: IconButton(
-                    icon: Icon(playing ? Icons.stop_circle : Icons.play_circle),
-                    color: const Color(0xFF0F5F5B),
-                    onPressed: () => _togglePlay(entry),
+                  leading: const Icon(
+                    Icons.graphic_eq,
+                    color: Color(0xFF0F5F5B),
                   ),
                   title: Text(
                     entry.customerName ?? formatPhone(entry.phoneNumber),
@@ -165,6 +118,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     '${entry.uploaded ? 'Synced to cloud' : 'Saved on this phone'}',
                   ),
                   isThreeLine: true,
+                  onTap: () => RecordingPlaybackSheet.show(context, entry),
                   trailing: PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'upload') {
