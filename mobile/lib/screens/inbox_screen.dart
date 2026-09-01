@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../services/inbound_sms_sync.dart';
+import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/inbox.dart';
 import '../utils/phone.dart';
@@ -16,6 +20,7 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
+  final _sms = SmsService();
   var _loading = true;
   List<InboxThread> _threads = [];
   String? _error;
@@ -23,15 +28,29 @@ class _InboxScreenState extends State<InboxScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
+    InboundSmsNotifier.instance.addListener(_onInboundSms);
+    unawaited(_load());
   }
 
-  Future<void> _load() async {
+  @override
+  void dispose() {
+    InboundSmsNotifier.instance.removeListener(_onInboundSms);
+    super.dispose();
+  }
+
+  void _onInboundSms() {
+    unawaited(_load(syncDevice: false));
+  }
+
+  Future<void> _load({bool syncDevice = true}) async {
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
+      if (syncDevice) {
+        await syncDeviceInbox(_sms);
+      }
       final customers = await widget.repository.fetchCustomers();
       final messages = await widget.repository.fetchMessages();
       setState(() => _threads = buildThreads(messages, customers));

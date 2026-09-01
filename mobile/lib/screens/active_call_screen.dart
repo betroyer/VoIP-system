@@ -6,6 +6,7 @@ import 'package:phone_state/phone_state.dart';
 
 import '../config/app_config.dart';
 import '../services/audio_cleanup_service.dart';
+import '../services/call_audio_service.dart';
 import '../services/call_recording_foreground.dart';
 import '../services/call_service.dart';
 import '../services/recording_history_service.dart';
@@ -31,7 +32,7 @@ Future<void> startRecordedCall({
           '${AppConfig.disclosureScript}\n\n'
           'Say this at the start of the call (RA 4200).\n\n'
           'The recording is saved in History on this phone as parcel proof. '
-          'Turn on speakerphone so more of the customer is heard.\n\n'
+          'Speakerphone is turned on automatically so the customer can be heard.\n\n'
           'Calling: ${formatPhone(phoneNumber)}'
           '${customerName != null ? '\nCustomer: $customerName' : ''}',
         ),
@@ -89,6 +90,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
   final _calls = CallService();
   final _recorder = RecordingService();
   StreamSubscription<PhoneState>? _phoneSub;
+  Timer? _recordingFallback;
+  Timer? _speakerTimer;
   var _status = 'Starting…';
   var _recording = false;
   var _saving = false;
@@ -107,8 +110,11 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _phoneSub?.cancel();
+    _recordingFallback?.cancel();
+    _speakerTimer?.cancel();
     unawaited(CallRecordingForeground.stop());
     unawaited(_recorder.dispose());
+    unawaited(CallAudioService.instance.endCallRecording());
     super.dispose();
   }
 
@@ -126,39 +132,67 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
     }
   }
 
+  Future<void> _startRecording() async {
+    if (_recording || _finished || !mounted) return;
+    try {
+      await _recorder.startRecording(phoneNumber: widget.phoneNumber);
+      _speakerTimer?.cancel();
+      _speakerTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+        unawaited(CallAudioService.instance.keepSpeakerOn());
+      });
+      if (!mounted) return;
+      setState(() {
+        _recording = true;
+        _status =
+            'On call — recording with speakerphone.\n'
+            'When finished, return here and tap Stop & save.';
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _status = 'Recording failed: $error\nTap Stop to retry or cancel.';
+      });
+    }
+  }
+
   Future<void> _begin() async {
     try {
-      setState(() => _status = 'Starting recorder…');
+      setState(() => _status = 'Preparing call recorder…');
       await CallRecordingForeground.start(
         phoneLabel: formatPhone(widget.phoneNumber),
       );
-      await _recorder.startRecording(phoneNumber: widget.phoneNumber);
-      setState(() {
-        _recording = true;
-        _status = 'Recording — placing call…';
-      });
 
       _phoneSub = PhoneState.stream.listen((state) {
         if (_finished) return;
         if (state.status == PhoneStateStatus.CALL_STARTED ||
             state.status == PhoneStateStatus.CALL_OUTGOING) {
           _sawCallStarted = true;
+          if (state.status == PhoneStateStatus.CALL_STARTED) {
+            unawaited(_startRecording());
+          }
         }
         if (state.status == PhoneStateStatus.CALL_ENDED && _sawCallStarted) {
           unawaited(_finish(auto: true));
         }
       });
 
+      setState(() => _status = 'Placing call…');
       final ok = await _calls.placeCall(widget.phoneNumber);
       if (!mounted) return;
       setState(() {
         _dialed = ok;
         _status = ok
-            ? 'On call — recording.\n'
-                'Use speakerphone.\n'
-                'When finished, return here and tap Stop & save.'
+            ? 'Dialing — recording starts when the call connects.\n'
+                'Speakerphone turns on automatically.'
             : 'Dial failed. You can stop and discard.';
       });
+
+      if (ok) {
+        _recordingFallback?.cancel();
+        _recordingFallback = Timer(const Duration(seconds: 4), () {
+          unawaited(_startRecording());
+        });
+      }
     } catch (error) {
       await CallRecordingForeground.stop();
       if (!mounted) return;
@@ -178,11 +212,15 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
           : 'Stopping — saving to History…';
     });
     _finished = true;
+    _recordingFallback?.cancel();
+    _speakerTimer?.cancel();
     await _phoneSub?.cancel();
     _phoneSub = null;
 
     try {
-      final result = await _recorder.stopRecording();
+      final result = _recording
+          ? await _recorder.stopRecording()
+          : null;
       await CallRecordingForeground.stop();
       setState(() => _recording = false);
 
@@ -191,8 +229,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'No audio captured. Keep the app recording notification on, '
-              'use speakerphone, and tap Stop right after the call.',
+              'No audio captured. Keep the recording notification on and tap '
+              'Stop right after the call. Speakerphone is enabled automatically.',
             ),
           ),
         );
@@ -271,6 +309,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
 
   Future<void> _discard() async {
     _finished = true;
+    _recordingFallback?.cancel();
+    _speakerTimer?.cancel();
     await _phoneSub?.cancel();
     await _recorder.cancelRecording();
     await CallRecordingForeground.stop();

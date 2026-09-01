@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/customer.dart';
 import '../models/message.dart';
+import '../services/inbound_sms_sync.dart';
 import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import '../utils/phone.dart';
@@ -36,13 +39,23 @@ class _ThreadScreenState extends State<ThreadScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
+    InboundSmsNotifier.instance.addListener(_onInboundSms);
+    unawaited(_load());
   }
 
   @override
   void dispose() {
+    InboundSmsNotifier.instance.removeListener(_onInboundSms);
     _composer.dispose();
     super.dispose();
+  }
+
+  void _onInboundSms() {
+    final incoming = InboundSmsNotifier.instance.lastPhone;
+    if (incoming != null && incoming != phoneKey(widget.phoneNumber)) {
+      return;
+    }
+    unawaited(_load());
   }
 
   Future<void> _load() async {

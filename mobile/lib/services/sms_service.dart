@@ -39,17 +39,27 @@ class SmsService {
     return digits;
   }
 
-  void listenInbound(void Function(String from, String body) onMessage) {
+  void listenInbound({
+    required void Function(SmsMessage message) onMessage,
+    MessageHandler? onBackgroundMessage,
+  }) {
     if (!Platform.isAndroid) return;
     _telephony.listenIncomingSms(
-      onNewMessage: (SmsMessage message) {
-        final from = message.address ?? '';
-        final body = message.body ?? '';
-        if (from.isNotEmpty && body.isNotEmpty) {
-          onMessage(from, body);
-        }
-      },
-      listenInBackground: false,
+      onNewMessage: onMessage,
+      onBackgroundMessage: onBackgroundMessage,
+      listenInBackground: onBackgroundMessage != null,
     );
+  }
+
+  Future<List<SmsMessage>> fetchRecentInbox({int limit = 200}) async {
+    if (!Platform.isAndroid) return const [];
+    final granted = await ensurePermissions();
+    if (!granted) return const [];
+
+    final messages = await _telephony.getInboxSms(
+      sortOrder: [OrderBy(SmsColumn.DATE, sort: Sort.DESC)],
+    );
+    if (messages.length <= limit) return messages;
+    return messages.sublist(0, limit);
   }
 }

@@ -28,7 +28,7 @@ class AudioCleanupService {
         '-i',
         sourcePath,
         '-af',
-        'highpass=f=100,lowpass=f=3800,afftdn=nr=12:nf=-35:tn=1',
+        'highpass=f=120,lowpass=f=3600,afftdn=nr=14:nf=-35:tn=1,compand=attacks=0.03:decays=0.25:points=-90/-90|-60/-45|-30/-18|-10/-8|0/-4,dynaudnorm=f=150:g=9',
         '-c:a',
         'aac',
         '-b:a',

@@ -118,3 +118,19 @@ Next.js 16 app: login, today's queue, customers, orders, contact logs, optional 
 Initialized this folder as its own git repo (not `C:\Users\Admin`). Local `user.name=betroyer`. Pushed to https://github.com/betroyer/VoIP-system.git over HTTPS. SSH key on this PC is not authorized for GitHub.
 
 **Key files:** `.git/config` (local)
+
+### 2026-09-01 — mobile-v1.0.4 released
+
+Published **Customer Contact Android v1.0.4** with History playback modal (seekable playhead, play/pause) and FFmpeg noise cleanup after calls. APK ~128 MB.
+
+- Release: https://github.com/betroyer/VoIP-system/releases/tag/mobile-v1.0.4
+- Tag `mobile-v1.0.4` on branch `v1.0.1`, commit `9f0ecc8`
+- CI workflow `.github/workflows/android-release.yml` remains local only (GitHub token lacks `workflow` scope)
+
+**Key files:** `mobile/lib/widgets/recording_playback_sheet.dart`, `mobile/lib/services/audio_cleanup_service.dart`, `mobile/lib/screens/history_screen.dart`
+
+### 2026-09-01 — Fix inbound SMS not appearing in Inbox
+
+Incoming SMS listener existed but Android never delivered messages: missing `IncomingSmsReceiver` in `AndroidManifest.xml`. Added receiver, background sync to Supabase, device inbox backfill on load/refresh, and live inbox/thread refresh via `InboundSmsNotifier`.
+
+**Key files:** `mobile/android/app/src/main/AndroidManifest.xml`, `mobile/lib/services/inbound_sms_sync.dart`, `mobile/lib/screens/app_shell.dart`, `mobile/lib/screens/inbox_screen.dart`

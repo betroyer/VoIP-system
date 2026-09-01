@@ -4,10 +4,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 
-/// Best-effort call recording via the device microphone + foreground service.
+import 'call_audio_service.dart';
+
+/// Best-effort call recording via speakerphone routing + microphone.
 ///
-/// Android blocks full cellular duplex capture for normal apps. Speakerphone
-/// + mic is the supported parcel-proof path.
+/// Android blocks full cellular duplex capture for normal apps. Forcing
+/// speakerphone and recording in communication mode is the Cube ACR-style path.
 class RecordingService {
   final AudioRecorder _recorder = AudioRecorder();
   String? _activePath;
@@ -53,11 +55,13 @@ class RecordingService {
     final safePhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
     final path = '${tempDir.path}/call_${safePhone}_$stamp.m4a';
 
+    await CallAudioService.instance.beginCallRecording();
+
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.aacLc,
-        bitRate: 128000,
-        sampleRate: 44100,
+        bitRate: 192000,
+        sampleRate: 48000,
         numChannels: 1,
         androidConfig: AndroidRecordConfig(
           useLegacy: true,
@@ -100,6 +104,7 @@ class RecordingService {
 
     _activePath = null;
     _startedAt = null;
+    await CallAudioService.instance.endCallRecording();
 
     final filePath = stoppedPath ?? path;
     if (filePath == null) return null;
@@ -138,6 +143,7 @@ class RecordingService {
     final path = _activePath;
     _activePath = null;
     _startedAt = null;
+    await CallAudioService.instance.endCallRecording();
     if (path != null) {
       final file = File(path);
       if (await file.exists()) {

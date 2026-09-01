@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/inbound_sms_sync.dart';
 import '../services/sms_service.dart';
 import '../services/supabase_repository.dart';
 import 'contacts_screen.dart';
@@ -29,18 +30,21 @@ class _AppShellState extends State<AppShell> {
 
   Future<void> _startInboundSms() async {
     await _sms.ensurePermissions();
-    _sms.listenInbound((from, body) async {
-      try {
-        await widget.repository.insertMessage(
-          phoneNumber: from,
-          direction: 'inbound',
-          body: body,
-          staffId: null,
-        );
-      } catch (error) {
-        debugPrint('Inbound SMS sync failed: $error');
-      }
-    });
+    _sms.listenInbound(
+      onMessage: (message) async {
+        try {
+          await handleInboundSmsMessage(message);
+        } catch (error) {
+          debugPrint('Inbound SMS sync failed: $error');
+        }
+      },
+      onBackgroundMessage: smsBackgroundMessageHandler,
+    );
+    try {
+      await syncDeviceInbox(_sms);
+    } catch (error) {
+      debugPrint('Initial inbox sync failed: $error');
+    }
   }
 
   @override
