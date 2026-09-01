@@ -60,14 +60,14 @@ class RecordingService {
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.aacLc,
-        bitRate: 192000,
-        sampleRate: 48000,
+        bitRate: 128000,
+        sampleRate: 44100,
         numChannels: 1,
         androidConfig: AndroidRecordConfig(
           useLegacy: true,
-          audioSource: AndroidAudioSource.voiceCommunication,
+          audioSource: AndroidAudioSource.mic,
           speakerphone: true,
-          audioManagerMode: AudioManagerMode.modeInCommunication,
+          audioManagerMode: AudioManagerMode.modeInCall,
           manageBluetooth: false,
         ),
       ),

@@ -78,6 +78,8 @@ class _RecordingPlaybackSheetState extends State<RecordingPlaybackSheet> {
     });
 
     try {
+      await _player.setPlayerMode(PlayerMode.mediaPlayer);
+      await _player.setVolume(1.0);
       await _player.setSource(DeviceFileSource(widget.entry.localPath));
       final total = await _player.getDuration();
       if (!mounted) return;

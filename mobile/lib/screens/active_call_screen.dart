@@ -90,7 +90,6 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
   final _calls = CallService();
   final _recorder = RecordingService();
   StreamSubscription<PhoneState>? _phoneSub;
-  Timer? _recordingFallback;
   Timer? _speakerTimer;
   var _status = 'Starting…';
   var _recording = false;
@@ -110,7 +109,6 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _phoneSub?.cancel();
-    _recordingFallback?.cancel();
     _speakerTimer?.cancel();
     unawaited(CallRecordingForeground.stop());
     unawaited(_recorder.dispose());
@@ -157,42 +155,35 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
 
   Future<void> _begin() async {
     try {
-      setState(() => _status = 'Preparing call recorder…');
+      setState(() => _status = 'Starting recorder…');
       await CallRecordingForeground.start(
         phoneLabel: formatPhone(widget.phoneNumber),
       );
+      await _startRecording();
 
       _phoneSub = PhoneState.stream.listen((state) {
         if (_finished) return;
         if (state.status == PhoneStateStatus.CALL_STARTED ||
             state.status == PhoneStateStatus.CALL_OUTGOING) {
           _sawCallStarted = true;
-          if (state.status == PhoneStateStatus.CALL_STARTED) {
-            unawaited(_startRecording());
-          }
+          unawaited(CallAudioService.instance.keepSpeakerOn());
         }
         if (state.status == PhoneStateStatus.CALL_ENDED && _sawCallStarted) {
           unawaited(_finish(auto: true));
         }
       });
 
-      setState(() => _status = 'Placing call…');
+      setState(() => _status = 'Recording — placing call…');
       final ok = await _calls.placeCall(widget.phoneNumber);
       if (!mounted) return;
       setState(() {
         _dialed = ok;
         _status = ok
-            ? 'Dialing — recording starts when the call connects.\n'
-                'Speakerphone turns on automatically.'
+            ? 'On call — recording.\n'
+                'Speakerphone is on automatically.\n'
+                'When finished, return here and tap Stop & save.'
             : 'Dial failed. You can stop and discard.';
       });
-
-      if (ok) {
-        _recordingFallback?.cancel();
-        _recordingFallback = Timer(const Duration(seconds: 4), () {
-          unawaited(_startRecording());
-        });
-      }
     } catch (error) {
       await CallRecordingForeground.stop();
       if (!mounted) return;
@@ -212,7 +203,6 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
           : 'Stopping — saving to History…';
     });
     _finished = true;
-    _recordingFallback?.cancel();
     _speakerTimer?.cancel();
     await _phoneSub?.cancel();
     _phoneSub = null;
@@ -238,29 +228,22 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
         return;
       }
 
-      // Prepare a speech-focused copy for History. If the filter fails, keep
-      // the original recording so the call is not lost.
-      final cleanedPath = await AudioCleanupService().cleanForReview(
-        sourcePath: result.filePath,
-      );
-      final reviewPath = cleanedPath ?? result.filePath;
-
-      // Always store on-device History first (works even if cloud fails).
+      // Always keep the original capture. Cleanup is optional and must not
+      // replace audio that already has voice in it.
       final entry = await RecordingHistoryService.instance.saveRecording(
-        sourcePath: reviewPath,
+        sourcePath: result.filePath,
         phoneNumber: widget.phoneNumber,
         customerName: widget.customerName,
         durationSeconds: result.durationSeconds,
-        notes: cleanedPath != null
-            ? 'Parcel call recording; background-noise reduction applied.'
-            : 'Parcel call recording (RA 4200 disclosure given).',
+        notes: 'Parcel call recording (RA 4200 disclosure given).',
       );
 
-      // The clean copy was moved into History. Remove the temporary original.
+      final cleanedPath = await AudioCleanupService().cleanForReview(
+        sourcePath: result.filePath,
+      );
       if (cleanedPath != null && cleanedPath != result.filePath) {
         try {
-          final original = File(result.filePath);
-          if (await original.exists()) await original.delete();
+          await File(cleanedPath).delete();
         } catch (_) {}
       }
 
@@ -309,7 +292,6 @@ class _ActiveCallScreenState extends State<ActiveCallScreen>
 
   Future<void> _discard() async {
     _finished = true;
-    _recordingFallback?.cancel();
     _speakerTimer?.cancel();
     await _phoneSub?.cancel();
     await _recorder.cancelRecording();

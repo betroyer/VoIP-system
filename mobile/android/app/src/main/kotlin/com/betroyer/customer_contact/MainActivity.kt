@@ -23,13 +23,13 @@ class MainActivity : FlutterActivity() {
                             savedSpeakerphone = audioManager.isSpeakerphoneOn
                             savedMode = audioManager.mode
                         }
-                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                        audioManager.mode = AudioManager.MODE_IN_CALL
                         audioManager.isSpeakerphoneOn = true
                         result.success(true)
                     }
 
                     "keepSpeakerOn" -> {
-                        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                        audioManager.mode = AudioManager.MODE_IN_CALL
                         audioManager.isSpeakerphoneOn = true
                         result.success(audioManager.isSpeakerphoneOn)
                     }
