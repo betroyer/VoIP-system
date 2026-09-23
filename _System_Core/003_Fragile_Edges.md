@@ -49,6 +49,10 @@ On order edit, `customer_id` is disabled. `updateOrder` must not require it from
 
 Bucket `call-recordings` is not public. Store the storage **path** in `contact_logs.recording_link`, then signed URLs when playing back.
 
+## Android Shizuku recorder is OEM-fragile
+
+`android-call-recorder/` uses Wireless Debugging + Shizuku to attempt `pm grant CAPTURE_AUDIO_OUTPUT` and `AudioSource.VOICE_CALL`. Many stock builds reject that grant; result may be mic-only. Always test a short call per phone model. Sideload only; not a Play Store path.
+
 ## Twilio webhooks must skip login
 
 `/api/voice/twiml` and `/api/sms/incoming` are allowlisted in `lib/supabase/proxy.ts`. `TWILIO_VOICE_WEBHOOK_URL` / `TWILIO_SMS_WEBHOOK_URL` must match the public URL Twilio posts to (signature check).

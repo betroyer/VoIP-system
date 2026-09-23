@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoIP Call Recorder</string>
+    <string name="wizard_title">Setup guide</string>
+    <string name="guide_title">Activate both-sides recording</string>
+    <string name="accessibility_service_description">
+        Records SIM calls for parcel follow-up after you enable it. Say the RA 4200 disclosure on each call.
+        Only use on staff devices you own.
+    </string>
+    <string name="ra4200_reminder">
+        Philippine RA 4200: tell the other party — “This call may be recorded for quality purposes.”
+    </string>
+    <string name="shizuku_not_running">Shizuku is not running. Open Shizuku and start via Wireless Debugging.</string>
+    <string name="shizuku_not_granted">Tap Grant to allow this app to use Shizuku / ADB.</string>
+    <string name="shizuku_ready">Shizuku ready</string>
+    <string name="open_setup_guide">Open step-by-step setup guide</string>
+    <string name="checklist_title">Activation checklist</string>
+</resources>

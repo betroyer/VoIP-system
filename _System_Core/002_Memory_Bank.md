@@ -4,6 +4,18 @@
 
 ## Recent log entries
 
+### 2026-09-23 — Call recorder v1.0.0 guide + release APK
+
+Expanded in-app **9-step activation guide** (first launch + checklist on home). Built **release APK** `android-call-recorder/releases/VoIP-Call-Recorder-1.0.0.apk` (versionCode 2). Fixed Shizuku 13 private `newProcess` via reflection. Staff sideload + Shizuku still required for both-sides SIM audio.
+
+**Key files:** `android-call-recorder/…/WizardActivity.kt`, `…/MainActivity.kt`, `releases/VoIP-Call-Recorder-1.0.0.apk`
+
+### 2026-09-23 — Android Shizuku call recorder companion
+
+Scaffolded `android-call-recorder/` for Unli SIM both-sides recording on staff Android phones: Shizuku Wireless Debugging, ADB unlock helper (`CAPTURE_AUDIO_OUTPUT` best-effort), AccessibilityService + telephony OFFHOOK recording to `.m4a`, and a pairing wizard UI. **Caveat:** many stock OEMs reject `pm grant CAPTURE_AUDIO_OUTPUT`; VOICE_CALL may stay mic-only — test per device. RA 4200 disclosure still required. Not wired into Next.js auto-upload yet.
+
+**Key files:** `android-call-recorder/README.md`, `…/shizuku/ShizukuManager.kt`, `…/shizuku/AdbPrivilegeHelper.kt`, `…/service/CallRecordingAccessibilityService.kt`, `…/audio/CallAudioRecorder.kt`, `…/ui/WizardActivity.kt`
+
 ### 2026-08-20 — Call center Contact + Inbox (from PC)
 
 Staff asked for computer calling and Messenger-style SMS. Added **Contact** (dial pad) and **Inbox** (threads + call). Twilio Voice/SMS is required for the PC path; Unli SIM remains phone fallback. Plan v3 is superseded for desktop agents by spec `2026-08-20_call-center-contact-inbox`.

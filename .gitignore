@@ -41,3 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 supabase/.temp/
+
+# Android release binaries (attach via GitHub Releases)
+*.apk
+android-call-recorder/local.properties
+android-call-recorder/**/build/
+android-call-recorder/.gradle/
